@@ -1,0 +1,7 @@
+{
+  "versionCode": 1,
+  "versionName": "1.0.0",
+  "updateUrl": "https://github.com/YOUR_USERNAME/slot-assistant/releases/download/v1.0.0/app-release.apk",
+  "changelog": "İlk sürüm\n- Otomatik slot seçimi\n- Kurye giriş entegrasyonu\n- Çoklu slot desteği",
+  "forceUpdate": false
+}

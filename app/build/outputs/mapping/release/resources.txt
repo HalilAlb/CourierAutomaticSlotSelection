@@ -1,0 +1,717 @@
+Marking id:tag_unhandled_key_event_manager:2131099723 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:view_tree_view_model_store_owner:2131099733 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:view_tree_on_back_pressed_dispatcher_owner:2131099731 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:report_drawn:2131099710 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:androidx_compose_ui_view_composition_context:2131099686 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:default_popup_window_title:2131361841 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:compose_view_saveable_id_tag:2131099690 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:wrapped_composition_tag:2131099734 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:view_tree_lifecycle_owner:2131099730 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_0:2131099649 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_1:2131099650 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_2:2131099661 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_3:2131099672 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_4:2131099675 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_5:2131099676 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_6:2131099677 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_7:2131099678 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_8:2131099679 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_9:2131099680 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_10:2131099651 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_11:2131099652 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_12:2131099653 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_13:2131099654 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_14:2131099655 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_15:2131099656 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_16:2131099657 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_17:2131099658 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_18:2131099659 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_19:2131099660 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_20:2131099662 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_21:2131099663 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_22:2131099664 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_23:2131099665 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_24:2131099666 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_25:2131099667 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_26:2131099668 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_27:2131099669 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_28:2131099670 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_29:2131099671 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_30:2131099673 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_custom_action_31:2131099674 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:indeterminate:2131361846 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:off:2131361852 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:on:2131361853 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:selected:2131361857 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:not_selected:2131361849 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:template_percent:2131361863 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:in_progress:2131361845 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:tag_window_insets_animation_callback:2131099725 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:tag_on_apply_window_listener:2131099717 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:tag_unhandled_key_listeners:2131099724 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:pooling_container_listener_holder_tag:2131099709 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:is_pooling_container_tag:2131099701 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:view_tree_saved_state_registry_owner:2131099732 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:hide_in_inspector_tag:2131099696 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:androidx_startup:2131361793 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:tab:2131361862 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:switch_role:2131361861 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:tag_screen_reader_focusable:2131099720 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:tag_accessibility_heading:2131099715 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:tag_accessibility_pane_title:2131099716 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:tag_state_description:2131099721 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:tag_accessibility_actions:2131099713 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:accessibility_action_clickable_span:2131099648 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:tag_accessibility_clickable_spans:2131099714 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:navigation_menu:2131361848 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:close_drawer:2131361806 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:close_sheet:2131361807 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:default_error_message:2131361840 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:dropdown_menu:2131361843 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:range_start:2131361855 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:range_end:2131361854 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:dialog:2131361842 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:expanded:2131361844 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:collapsed:2131361808 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:snackbar_dismiss:2131361858 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:search_bar_search:2131361856 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:suggestions_available:2131361860 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_picker_title:2131361829 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_picker_headline:2131361817 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_picker_year_picker_pane_title:2131361831 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_picker_switch_to_year_selection:2131361828 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_picker_switch_to_day_selection:2131361824 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_picker_switch_to_next_month:2131361826 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_picker_switch_to_previous_month:2131361827 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_picker_navigate_to_year_description:2131361819 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_picker_headline_description:2131361818 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_picker_no_selection_description:2131361820 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_picker_today_description:2131361830 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_picker_scroll_to_later_years:2131361822 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_picker_scroll_to_earlier_years:2131361821 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_input_title:2131361816 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_input_headline:2131361809 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_input_label:2131361814 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_input_headline_description:2131361810 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_input_no_input_description:2131361815 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_input_invalid_not_allowed:2131361812 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_input_invalid_for_pattern:2131361811 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_input_invalid_year_range:2131361813 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_picker_switch_to_calendar_mode:2131361823 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_picker_switch_to_input_mode:2131361825 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_range_picker_title:2131361839 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_range_picker_start_headline:2131361838 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_range_picker_end_headline:2131361835 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_range_picker_scroll_to_next_month:2131361836 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_range_picker_scroll_to_previous_month:2131361837 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_range_picker_day_in_range:2131361834 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_range_input_title:2131361833 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:date_range_input_invalid_range_input:2131361832 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:m3c_bottom_sheet_pane_title:2131361847 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:bottom_sheet_drag_handle_description:2131361797 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:bottom_sheet_collapse_description:2131361795 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:bottom_sheet_dismiss_description:2131361796 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:bottom_sheet_expand_description:2131361798 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:tooltip_long_press_label:2131361878 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:time_picker_am:2131361864 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:time_picker_pm:2131361875 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:time_picker_period_toggle_description:2131361874 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:time_picker_minute_selection:2131361871 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:time_picker_hour_selection:2131361867 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:time_picker_hour_suffix:2131361868 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:time_picker_minute_suffix:2131361872 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:time_picker_hour_24h_suffix:2131361866 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:time_picker_hour:2131361865 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:time_picker_minute:2131361870 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:time_picker_hour_text_field:2131361869 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:time_picker_minute_text_field:2131361873 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking string:tooltip_pane_description:2131361879 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:inspection_slot_table_set:2131099700 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking bool:workmanager_test_configuration:2130837507 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking id:consume_window_insets_tag:2131099691 reachable: referenced from in_memory_r8_base_classes0.dex
+Marking style:DialogWindowTheme:2131427328 reachable: referenced from in_memory_r8_base_classes0.dex
+@com.example.slotassistant:attr/alpha : reachable=false
+@com.example.slotassistant:attr/font : reachable=false
+@com.example.slotassistant:attr/fontProviderAuthority : reachable=false
+@com.example.slotassistant:attr/fontProviderCerts : reachable=false
+@com.example.slotassistant:attr/fontProviderFetchStrategy : reachable=false
+@com.example.slotassistant:attr/fontProviderFetchTimeout : reachable=false
+@com.example.slotassistant:attr/fontProviderPackage : reachable=false
+@com.example.slotassistant:attr/fontProviderQuery : reachable=false
+@com.example.slotassistant:attr/fontProviderSystemFontFamily : reachable=false
+@com.example.slotassistant:attr/fontStyle : reachable=false
+@com.example.slotassistant:attr/fontVariationSettings : reachable=false
+@com.example.slotassistant:attr/fontWeight : reachable=false
+@com.example.slotassistant:attr/lStar : reachable=false
+@com.example.slotassistant:attr/nestedScrollViewStyle : reachable=false
+@com.example.slotassistant:attr/queryPatterns : reachable=false
+@com.example.slotassistant:attr/shortcutMatchRequired : reachable=false
+@com.example.slotassistant:attr/ttcIndex : reachable=false
+@com.example.slotassistant:bool/enable_system_alarm_service_default : reachable=true
+@com.example.slotassistant:bool/enable_system_foreground_service_default : reachable=true
+@com.example.slotassistant:bool/enable_system_job_service_default : reachable=true
+@com.example.slotassistant:bool/workmanager_test_configuration : reachable=true
+@com.example.slotassistant:color/androidx_core_ripple_material_light : reachable=false
+@com.example.slotassistant:color/androidx_core_secondary_text_default_material_light : reachable=false
+@com.example.slotassistant:color/black : reachable=false
+@com.example.slotassistant:color/call_notification_answer_color : reachable=false
+@com.example.slotassistant:color/call_notification_decline_color : reachable=false
+@com.example.slotassistant:color/ic_launcher_background : reachable=false
+@com.example.slotassistant:color/notification_action_color_filter : reachable=false
+    @com.example.slotassistant:color/androidx_core_secondary_text_default_material_light
+@com.example.slotassistant:color/notification_icon_bg_color : reachable=false
+@com.example.slotassistant:color/purple_200 : reachable=false
+@com.example.slotassistant:color/purple_500 : reachable=false
+@com.example.slotassistant:color/purple_700 : reachable=false
+@com.example.slotassistant:color/teal_200 : reachable=false
+@com.example.slotassistant:color/teal_700 : reachable=false
+@com.example.slotassistant:color/vector_tint_color : reachable=false
+@com.example.slotassistant:color/vector_tint_theme_color : reachable=false
+@com.example.slotassistant:color/white : reachable=false
+@com.example.slotassistant:dimen/compat_button_inset_horizontal_material : reachable=false
+@com.example.slotassistant:dimen/compat_button_inset_vertical_material : reachable=false
+@com.example.slotassistant:dimen/compat_button_padding_horizontal_material : reachable=false
+@com.example.slotassistant:dimen/compat_button_padding_vertical_material : reachable=false
+@com.example.slotassistant:dimen/compat_control_corner_material : reachable=false
+@com.example.slotassistant:dimen/compat_notification_large_icon_max_height : reachable=false
+@com.example.slotassistant:dimen/compat_notification_large_icon_max_width : reachable=false
+@com.example.slotassistant:dimen/notification_action_icon_size : reachable=false
+@com.example.slotassistant:dimen/notification_action_text_size : reachable=false
+@com.example.slotassistant:dimen/notification_big_circle_margin : reachable=false
+@com.example.slotassistant:dimen/notification_content_margin_start : reachable=false
+@com.example.slotassistant:dimen/notification_large_icon_height : reachable=false
+@com.example.slotassistant:dimen/notification_large_icon_width : reachable=false
+@com.example.slotassistant:dimen/notification_main_column_padding_top : reachable=false
+@com.example.slotassistant:dimen/notification_media_narrow_margin : reachable=false
+@com.example.slotassistant:dimen/notification_right_icon_size : reachable=false
+@com.example.slotassistant:dimen/notification_right_side_padding_top : reachable=false
+@com.example.slotassistant:dimen/notification_small_icon_background_padding : reachable=false
+@com.example.slotassistant:dimen/notification_small_icon_size_as_large : reachable=false
+@com.example.slotassistant:dimen/notification_subtext_size : reachable=false
+@com.example.slotassistant:dimen/notification_top_pad : reachable=false
+@com.example.slotassistant:dimen/notification_top_pad_large_text : reachable=false
+@com.example.slotassistant:drawable/ic_call_answer : reachable=false
+@com.example.slotassistant:drawable/ic_call_answer_low : reachable=false
+@com.example.slotassistant:drawable/ic_call_answer_video : reachable=false
+@com.example.slotassistant:drawable/ic_call_answer_video_low : reachable=false
+@com.example.slotassistant:drawable/ic_call_decline : reachable=false
+@com.example.slotassistant:drawable/ic_call_decline_low : reachable=false
+@com.example.slotassistant:drawable/notification_action_background : reachable=false
+    @com.example.slotassistant:color/androidx_core_ripple_material_light
+    @com.example.slotassistant:dimen/compat_button_inset_horizontal_material
+    @com.example.slotassistant:dimen/compat_button_inset_vertical_material
+    @com.example.slotassistant:dimen/compat_control_corner_material
+    @com.example.slotassistant:dimen/compat_button_padding_vertical_material
+    @com.example.slotassistant:dimen/compat_button_padding_horizontal_material
+@com.example.slotassistant:drawable/notification_bg : reachable=false
+    @com.example.slotassistant:drawable/notification_bg_normal_pressed
+    @com.example.slotassistant:drawable/notification_bg_normal
+@com.example.slotassistant:drawable/notification_bg_low : reachable=false
+    @com.example.slotassistant:drawable/notification_bg_low_pressed
+    @com.example.slotassistant:drawable/notification_bg_low_normal
+@com.example.slotassistant:drawable/notification_bg_low_normal : reachable=false
+@com.example.slotassistant:drawable/notification_bg_low_pressed : reachable=false
+@com.example.slotassistant:drawable/notification_bg_normal : reachable=false
+@com.example.slotassistant:drawable/notification_bg_normal_pressed : reachable=false
+@com.example.slotassistant:drawable/notification_icon_background : reachable=false
+    @com.example.slotassistant:color/notification_icon_bg_color
+@com.example.slotassistant:drawable/notification_oversize_large_icon_bg : reachable=false
+@com.example.slotassistant:drawable/notification_template_icon_bg : reachable=false
+@com.example.slotassistant:drawable/notification_template_icon_low_bg : reachable=false
+@com.example.slotassistant:drawable/notification_tile_bg : reachable=false
+    @com.example.slotassistant:drawable/notify_panel_notification_icon_bg
+@com.example.slotassistant:drawable/notify_panel_notification_icon_bg : reachable=false
+@com.example.slotassistant:id/accessibility_action_clickable_span : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_0 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_1 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_10 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_11 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_12 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_13 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_14 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_15 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_16 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_17 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_18 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_19 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_2 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_20 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_21 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_22 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_23 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_24 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_25 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_26 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_27 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_28 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_29 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_3 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_30 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_31 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_4 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_5 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_6 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_7 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_8 : reachable=true
+@com.example.slotassistant:id/accessibility_custom_action_9 : reachable=true
+@com.example.slotassistant:id/action_container : reachable=false
+@com.example.slotassistant:id/action_divider : reachable=false
+@com.example.slotassistant:id/action_image : reachable=false
+@com.example.slotassistant:id/action_text : reachable=false
+@com.example.slotassistant:id/actions : reachable=false
+@com.example.slotassistant:id/androidx_compose_ui_view_composition_context : reachable=true
+@com.example.slotassistant:id/async : reachable=false
+@com.example.slotassistant:id/blocking : reachable=false
+@com.example.slotassistant:id/chronometer : reachable=false
+@com.example.slotassistant:id/compose_view_saveable_id_tag : reachable=true
+@com.example.slotassistant:id/consume_window_insets_tag : reachable=true
+@com.example.slotassistant:id/dialog_button : reachable=false
+@com.example.slotassistant:id/edit_text_id : reachable=false
+@com.example.slotassistant:id/forever : reachable=false
+@com.example.slotassistant:id/hide_ime_id : reachable=false
+@com.example.slotassistant:id/hide_in_inspector_tag : reachable=true
+@com.example.slotassistant:id/icon : reachable=false
+@com.example.slotassistant:id/icon_group : reachable=false
+@com.example.slotassistant:id/info : reachable=false
+@com.example.slotassistant:id/inspection_slot_table_set : reachable=true
+@com.example.slotassistant:id/is_pooling_container_tag : reachable=true
+@com.example.slotassistant:id/italic : reachable=false
+@com.example.slotassistant:id/line1 : reachable=false
+@com.example.slotassistant:id/line3 : reachable=false
+@com.example.slotassistant:id/normal : reachable=false
+@com.example.slotassistant:id/notification_background : reachable=false
+@com.example.slotassistant:id/notification_main_column : reachable=false
+@com.example.slotassistant:id/notification_main_column_container : reachable=false
+@com.example.slotassistant:id/pooling_container_listener_holder_tag : reachable=true
+@com.example.slotassistant:id/report_drawn : reachable=true
+@com.example.slotassistant:id/right_icon : reachable=false
+@com.example.slotassistant:id/right_side : reachable=false
+@com.example.slotassistant:id/tag_accessibility_actions : reachable=true
+@com.example.slotassistant:id/tag_accessibility_clickable_spans : reachable=true
+@com.example.slotassistant:id/tag_accessibility_heading : reachable=true
+@com.example.slotassistant:id/tag_accessibility_pane_title : reachable=true
+@com.example.slotassistant:id/tag_on_apply_window_listener : reachable=true
+@com.example.slotassistant:id/tag_on_receive_content_listener : reachable=false
+@com.example.slotassistant:id/tag_on_receive_content_mime_types : reachable=false
+@com.example.slotassistant:id/tag_screen_reader_focusable : reachable=true
+@com.example.slotassistant:id/tag_state_description : reachable=true
+@com.example.slotassistant:id/tag_transition_group : reachable=false
+@com.example.slotassistant:id/tag_unhandled_key_event_manager : reachable=true
+@com.example.slotassistant:id/tag_unhandled_key_listeners : reachable=true
+@com.example.slotassistant:id/tag_window_insets_animation_callback : reachable=true
+@com.example.slotassistant:id/text : reachable=false
+@com.example.slotassistant:id/text2 : reachable=false
+@com.example.slotassistant:id/time : reachable=false
+@com.example.slotassistant:id/title : reachable=false
+@com.example.slotassistant:id/view_tree_lifecycle_owner : reachable=true
+@com.example.slotassistant:id/view_tree_on_back_pressed_dispatcher_owner : reachable=true
+@com.example.slotassistant:id/view_tree_saved_state_registry_owner : reachable=true
+@com.example.slotassistant:id/view_tree_view_model_store_owner : reachable=true
+@com.example.slotassistant:id/wrapped_composition_tag : reachable=true
+@com.example.slotassistant:integer/status_bar_notification_info_maxnum : reachable=false
+@com.example.slotassistant:layout/custom_dialog : reachable=false
+@com.example.slotassistant:layout/ime_base_split_test_activity : reachable=false
+@com.example.slotassistant:layout/ime_secondary_split_test_activity : reachable=false
+@com.example.slotassistant:layout/notification_action : reachable=false
+    @com.example.slotassistant:style/Widget_Compat_NotificationActionContainer
+    @com.example.slotassistant:dimen/notification_action_icon_size
+    @com.example.slotassistant:style/Widget_Compat_NotificationActionText
+@com.example.slotassistant:layout/notification_action_tombstone : reachable=false
+    @com.example.slotassistant:style/Widget_Compat_NotificationActionContainer
+    @com.example.slotassistant:dimen/notification_action_icon_size
+    @com.example.slotassistant:style/Widget_Compat_NotificationActionText
+@com.example.slotassistant:layout/notification_template_custom_big : reachable=false
+    @com.example.slotassistant:layout/notification_template_icon_group
+    @com.example.slotassistant:dimen/notification_large_icon_width
+    @com.example.slotassistant:dimen/notification_large_icon_height
+    @com.example.slotassistant:dimen/notification_right_side_padding_top
+    @com.example.slotassistant:layout/notification_template_part_time
+    @com.example.slotassistant:layout/notification_template_part_chronometer
+    @com.example.slotassistant:style/TextAppearance_Compat_Notification_Info
+@com.example.slotassistant:layout/notification_template_icon_group : reachable=false
+    @com.example.slotassistant:dimen/notification_large_icon_width
+    @com.example.slotassistant:dimen/notification_large_icon_height
+    @com.example.slotassistant:dimen/notification_big_circle_margin
+    @com.example.slotassistant:dimen/notification_right_icon_size
+@com.example.slotassistant:layout/notification_template_part_chronometer : reachable=false
+    @com.example.slotassistant:style/TextAppearance_Compat_Notification_Time
+@com.example.slotassistant:layout/notification_template_part_time : reachable=false
+    @com.example.slotassistant:style/TextAppearance_Compat_Notification_Time
+@com.example.slotassistant:mipmap/ic_launcher : reachable=true
+    @com.example.slotassistant:color/ic_launcher_background
+    @com.example.slotassistant:mipmap/ic_launcher_foreground
+@com.example.slotassistant:mipmap/ic_launcher_foreground : reachable=false
+@com.example.slotassistant:mipmap/ic_launcher_round : reachable=true
+    @com.example.slotassistant:color/ic_launcher_background
+    @com.example.slotassistant:mipmap/ic_launcher_foreground
+@com.example.slotassistant:string/accessibility_service_description : reachable=false
+@com.example.slotassistant:string/androidx_startup : reachable=true
+@com.example.slotassistant:string/app_name : reachable=true
+@com.example.slotassistant:string/bottom_sheet_collapse_description : reachable=true
+@com.example.slotassistant:string/bottom_sheet_dismiss_description : reachable=true
+@com.example.slotassistant:string/bottom_sheet_drag_handle_description : reachable=true
+@com.example.slotassistant:string/bottom_sheet_expand_description : reachable=true
+@com.example.slotassistant:string/call_notification_answer_action : reachable=false
+@com.example.slotassistant:string/call_notification_answer_video_action : reachable=false
+@com.example.slotassistant:string/call_notification_decline_action : reachable=false
+@com.example.slotassistant:string/call_notification_hang_up_action : reachable=false
+@com.example.slotassistant:string/call_notification_incoming_text : reachable=false
+@com.example.slotassistant:string/call_notification_ongoing_text : reachable=false
+@com.example.slotassistant:string/call_notification_screening_text : reachable=false
+@com.example.slotassistant:string/close_drawer : reachable=true
+@com.example.slotassistant:string/close_sheet : reachable=true
+@com.example.slotassistant:string/collapsed : reachable=true
+@com.example.slotassistant:string/date_input_headline : reachable=true
+@com.example.slotassistant:string/date_input_headline_description : reachable=true
+@com.example.slotassistant:string/date_input_invalid_for_pattern : reachable=true
+@com.example.slotassistant:string/date_input_invalid_not_allowed : reachable=true
+@com.example.slotassistant:string/date_input_invalid_year_range : reachable=true
+@com.example.slotassistant:string/date_input_label : reachable=true
+@com.example.slotassistant:string/date_input_no_input_description : reachable=true
+@com.example.slotassistant:string/date_input_title : reachable=true
+@com.example.slotassistant:string/date_picker_headline : reachable=true
+@com.example.slotassistant:string/date_picker_headline_description : reachable=true
+@com.example.slotassistant:string/date_picker_navigate_to_year_description : reachable=true
+@com.example.slotassistant:string/date_picker_no_selection_description : reachable=true
+@com.example.slotassistant:string/date_picker_scroll_to_earlier_years : reachable=true
+@com.example.slotassistant:string/date_picker_scroll_to_later_years : reachable=true
+@com.example.slotassistant:string/date_picker_switch_to_calendar_mode : reachable=true
+@com.example.slotassistant:string/date_picker_switch_to_day_selection : reachable=true
+@com.example.slotassistant:string/date_picker_switch_to_input_mode : reachable=true
+@com.example.slotassistant:string/date_picker_switch_to_next_month : reachable=true
+@com.example.slotassistant:string/date_picker_switch_to_previous_month : reachable=true
+@com.example.slotassistant:string/date_picker_switch_to_year_selection : reachable=true
+@com.example.slotassistant:string/date_picker_title : reachable=true
+@com.example.slotassistant:string/date_picker_today_description : reachable=true
+@com.example.slotassistant:string/date_picker_year_picker_pane_title : reachable=true
+@com.example.slotassistant:string/date_range_input_invalid_range_input : reachable=true
+@com.example.slotassistant:string/date_range_input_title : reachable=true
+@com.example.slotassistant:string/date_range_picker_day_in_range : reachable=true
+@com.example.slotassistant:string/date_range_picker_end_headline : reachable=true
+@com.example.slotassistant:string/date_range_picker_scroll_to_next_month : reachable=true
+@com.example.slotassistant:string/date_range_picker_scroll_to_previous_month : reachable=true
+@com.example.slotassistant:string/date_range_picker_start_headline : reachable=true
+@com.example.slotassistant:string/date_range_picker_title : reachable=true
+@com.example.slotassistant:string/default_error_message : reachable=true
+@com.example.slotassistant:string/default_popup_window_title : reachable=true
+@com.example.slotassistant:string/dialog : reachable=true
+@com.example.slotassistant:string/dropdown_menu : reachable=true
+@com.example.slotassistant:string/expanded : reachable=true
+@com.example.slotassistant:string/in_progress : reachable=true
+@com.example.slotassistant:string/indeterminate : reachable=true
+@com.example.slotassistant:string/m3c_bottom_sheet_pane_title : reachable=true
+@com.example.slotassistant:string/navigation_menu : reachable=true
+@com.example.slotassistant:string/not_selected : reachable=true
+@com.example.slotassistant:string/notification_channel_description : reachable=false
+@com.example.slotassistant:string/notification_channel_name : reachable=false
+@com.example.slotassistant:string/off : reachable=true
+@com.example.slotassistant:string/on : reachable=true
+@com.example.slotassistant:string/range_end : reachable=true
+@com.example.slotassistant:string/range_start : reachable=true
+@com.example.slotassistant:string/search_bar_search : reachable=true
+@com.example.slotassistant:string/selected : reachable=true
+@com.example.slotassistant:string/snackbar_dismiss : reachable=true
+@com.example.slotassistant:string/status_bar_notification_info_overflow : reachable=false
+@com.example.slotassistant:string/suggestions_available : reachable=true
+@com.example.slotassistant:string/switch_role : reachable=true
+@com.example.slotassistant:string/tab : reachable=true
+@com.example.slotassistant:string/template_percent : reachable=true
+@com.example.slotassistant:string/time_picker_am : reachable=true
+@com.example.slotassistant:string/time_picker_hour : reachable=true
+@com.example.slotassistant:string/time_picker_hour_24h_suffix : reachable=true
+@com.example.slotassistant:string/time_picker_hour_selection : reachable=true
+@com.example.slotassistant:string/time_picker_hour_suffix : reachable=true
+@com.example.slotassistant:string/time_picker_hour_text_field : reachable=true
+@com.example.slotassistant:string/time_picker_minute : reachable=true
+@com.example.slotassistant:string/time_picker_minute_selection : reachable=true
+@com.example.slotassistant:string/time_picker_minute_suffix : reachable=true
+@com.example.slotassistant:string/time_picker_minute_text_field : reachable=true
+@com.example.slotassistant:string/time_picker_period_toggle_description : reachable=true
+@com.example.slotassistant:string/time_picker_pm : reachable=true
+@com.example.slotassistant:string/tooltip_description : reachable=false
+@com.example.slotassistant:string/tooltip_label : reachable=false
+@com.example.slotassistant:string/tooltip_long_press_label : reachable=true
+@com.example.slotassistant:string/tooltip_pane_description : reachable=true
+@com.example.slotassistant:style/DialogWindowTheme : reachable=true
+@com.example.slotassistant:style/FloatingDialogTheme : reachable=false
+@com.example.slotassistant:style/FloatingDialogWindowTheme : reachable=false
+    @com.example.slotassistant:style/FloatingDialogTheme
+@com.example.slotassistant:style/TextAppearance_Compat_Notification : reachable=false
+@com.example.slotassistant:style/TextAppearance_Compat_Notification_Info : reachable=false
+@com.example.slotassistant:style/TextAppearance_Compat_Notification_Line2 : reachable=false
+    @com.example.slotassistant:style/TextAppearance_Compat_Notification_Info
+@com.example.slotassistant:style/TextAppearance_Compat_Notification_Time : reachable=false
+@com.example.slotassistant:style/TextAppearance_Compat_Notification_Title : reachable=false
+@com.example.slotassistant:style/Theme_SlotAssistant : reachable=true
+    @com.example.slotassistant:color/purple_700
+@com.example.slotassistant:style/Widget_Compat_NotificationActionContainer : reachable=false
+    @com.example.slotassistant:drawable/notification_action_background
+@com.example.slotassistant:style/Widget_Compat_NotificationActionText : reachable=false
+    @com.example.slotassistant:color/androidx_core_secondary_text_default_material_light
+    @com.example.slotassistant:dimen/notification_action_text_size
+@com.example.slotassistant:xml/accessibility_service_config : reachable=true
+    @com.example.slotassistant:string/accessibility_service_description
+@com.example.slotassistant:xml/backup_rules : reachable=true
+@com.example.slotassistant:xml/data_extraction_rules : reachable=true
+
+The root reachable resources are:
+ bool:enable_system_alarm_service_default:2130837504
+ bool:enable_system_foreground_service_default:2130837505
+ bool:enable_system_job_service_default:2130837506
+ bool:workmanager_test_configuration:2130837507
+ id:accessibility_action_clickable_span:2131099648
+ id:accessibility_custom_action_0:2131099649
+ id:accessibility_custom_action_1:2131099650
+ id:accessibility_custom_action_10:2131099651
+ id:accessibility_custom_action_11:2131099652
+ id:accessibility_custom_action_12:2131099653
+ id:accessibility_custom_action_13:2131099654
+ id:accessibility_custom_action_14:2131099655
+ id:accessibility_custom_action_15:2131099656
+ id:accessibility_custom_action_16:2131099657
+ id:accessibility_custom_action_17:2131099658
+ id:accessibility_custom_action_18:2131099659
+ id:accessibility_custom_action_19:2131099660
+ id:accessibility_custom_action_2:2131099661
+ id:accessibility_custom_action_20:2131099662
+ id:accessibility_custom_action_21:2131099663
+ id:accessibility_custom_action_22:2131099664
+ id:accessibility_custom_action_23:2131099665
+ id:accessibility_custom_action_24:2131099666
+ id:accessibility_custom_action_25:2131099667
+ id:accessibility_custom_action_26:2131099668
+ id:accessibility_custom_action_27:2131099669
+ id:accessibility_custom_action_28:2131099670
+ id:accessibility_custom_action_29:2131099671
+ id:accessibility_custom_action_3:2131099672
+ id:accessibility_custom_action_30:2131099673
+ id:accessibility_custom_action_31:2131099674
+ id:accessibility_custom_action_4:2131099675
+ id:accessibility_custom_action_5:2131099676
+ id:accessibility_custom_action_6:2131099677
+ id:accessibility_custom_action_7:2131099678
+ id:accessibility_custom_action_8:2131099679
+ id:accessibility_custom_action_9:2131099680
+ id:androidx_compose_ui_view_composition_context:2131099686
+ id:compose_view_saveable_id_tag:2131099690
+ id:consume_window_insets_tag:2131099691
+ id:hide_in_inspector_tag:2131099696
+ id:inspection_slot_table_set:2131099700
+ id:is_pooling_container_tag:2131099701
+ id:pooling_container_listener_holder_tag:2131099709
+ id:report_drawn:2131099710
+ id:tag_accessibility_actions:2131099713
+ id:tag_accessibility_clickable_spans:2131099714
+ id:tag_accessibility_heading:2131099715
+ id:tag_accessibility_pane_title:2131099716
+ id:tag_on_apply_window_listener:2131099717
+ id:tag_screen_reader_focusable:2131099720
+ id:tag_state_description:2131099721
+ id:tag_unhandled_key_event_manager:2131099723
+ id:tag_unhandled_key_listeners:2131099724
+ id:tag_window_insets_animation_callback:2131099725
+ id:view_tree_lifecycle_owner:2131099730
+ id:view_tree_on_back_pressed_dispatcher_owner:2131099731
+ id:view_tree_saved_state_registry_owner:2131099732
+ id:view_tree_view_model_store_owner:2131099733
+ id:wrapped_composition_tag:2131099734
+ mipmap:ic_launcher:2131296256
+ mipmap:ic_launcher_round:2131296258
+ string:androidx_startup:2131361793
+ string:app_name:2131361794
+ string:bottom_sheet_collapse_description:2131361795
+ string:bottom_sheet_dismiss_description:2131361796
+ string:bottom_sheet_drag_handle_description:2131361797
+ string:bottom_sheet_expand_description:2131361798
+ string:close_drawer:2131361806
+ string:close_sheet:2131361807
+ string:collapsed:2131361808
+ string:date_input_headline:2131361809
+ string:date_input_headline_description:2131361810
+ string:date_input_invalid_for_pattern:2131361811
+ string:date_input_invalid_not_allowed:2131361812
+ string:date_input_invalid_year_range:2131361813
+ string:date_input_label:2131361814
+ string:date_input_no_input_description:2131361815
+ string:date_input_title:2131361816
+ string:date_picker_headline:2131361817
+ string:date_picker_headline_description:2131361818
+ string:date_picker_navigate_to_year_description:2131361819
+ string:date_picker_no_selection_description:2131361820
+ string:date_picker_scroll_to_earlier_years:2131361821
+ string:date_picker_scroll_to_later_years:2131361822
+ string:date_picker_switch_to_calendar_mode:2131361823
+ string:date_picker_switch_to_day_selection:2131361824
+ string:date_picker_switch_to_input_mode:2131361825
+ string:date_picker_switch_to_next_month:2131361826
+ string:date_picker_switch_to_previous_month:2131361827
+ string:date_picker_switch_to_year_selection:2131361828
+ string:date_picker_title:2131361829
+ string:date_picker_today_description:2131361830
+ string:date_picker_year_picker_pane_title:2131361831
+ string:date_range_input_invalid_range_input:2131361832
+ string:date_range_input_title:2131361833
+ string:date_range_picker_day_in_range:2131361834
+ string:date_range_picker_end_headline:2131361835
+ string:date_range_picker_scroll_to_next_month:2131361836
+ string:date_range_picker_scroll_to_previous_month:2131361837
+ string:date_range_picker_start_headline:2131361838
+ string:date_range_picker_title:2131361839
+ string:default_error_message:2131361840
+ string:default_popup_window_title:2131361841
+ string:dialog:2131361842
+ string:dropdown_menu:2131361843
+ string:expanded:2131361844
+ string:in_progress:2131361845
+ string:indeterminate:2131361846
+ string:m3c_bottom_sheet_pane_title:2131361847
+ string:navigation_menu:2131361848
+ string:not_selected:2131361849
+ string:off:2131361852
+ string:on:2131361853
+ string:range_end:2131361854
+ string:range_start:2131361855
+ string:search_bar_search:2131361856
+ string:selected:2131361857
+ string:snackbar_dismiss:2131361858
+ string:suggestions_available:2131361860
+ string:switch_role:2131361861
+ string:tab:2131361862
+ string:template_percent:2131361863
+ string:time_picker_am:2131361864
+ string:time_picker_hour:2131361865
+ string:time_picker_hour_24h_suffix:2131361866
+ string:time_picker_hour_selection:2131361867
+ string:time_picker_hour_suffix:2131361868
+ string:time_picker_hour_text_field:2131361869
+ string:time_picker_minute:2131361870
+ string:time_picker_minute_selection:2131361871
+ string:time_picker_minute_suffix:2131361872
+ string:time_picker_minute_text_field:2131361873
+ string:time_picker_period_toggle_description:2131361874
+ string:time_picker_pm:2131361875
+ string:tooltip_long_press_label:2131361878
+ string:tooltip_pane_description:2131361879
+ style:DialogWindowTheme:2131427328
+ style:Theme_SlotAssistant:2131427336
+ xml:accessibility_service_config:2131558400
+ xml:backup_rules:2131558401
+ xml:data_extraction_rules:2131558402
+Unused resources are: 
+ color:androidx_core_ripple_material_light:2130903040
+ color:androidx_core_secondary_text_default_material_light:2130903041
+ color:black:2130903042
+ color:call_notification_answer_color:2130903043
+ color:call_notification_decline_color:2130903044
+ color:notification_action_color_filter:2130903046
+ color:notification_icon_bg_color:2130903047
+ color:purple_200:2130903048
+ color:purple_500:2130903049
+ color:teal_200:2130903051
+ color:teal_700:2130903052
+ color:vector_tint_color:2130903053
+ color:vector_tint_theme_color:2130903054
+ color:white:2130903055
+ dimen:compat_button_inset_horizontal_material:2130968576
+ dimen:compat_button_inset_vertical_material:2130968577
+ dimen:compat_button_padding_horizontal_material:2130968578
+ dimen:compat_button_padding_vertical_material:2130968579
+ dimen:compat_control_corner_material:2130968580
+ dimen:compat_notification_large_icon_max_height:2130968581
+ dimen:compat_notification_large_icon_max_width:2130968582
+ dimen:notification_action_icon_size:2130968583
+ dimen:notification_action_text_size:2130968584
+ dimen:notification_big_circle_margin:2130968585
+ dimen:notification_content_margin_start:2130968586
+ dimen:notification_large_icon_height:2130968587
+ dimen:notification_large_icon_width:2130968588
+ dimen:notification_main_column_padding_top:2130968589
+ dimen:notification_media_narrow_margin:2130968590
+ dimen:notification_right_icon_size:2130968591
+ dimen:notification_right_side_padding_top:2130968592
+ dimen:notification_small_icon_background_padding:2130968593
+ dimen:notification_small_icon_size_as_large:2130968594
+ dimen:notification_subtext_size:2130968595
+ dimen:notification_top_pad:2130968596
+ dimen:notification_top_pad_large_text:2130968597
+ drawable:ic_call_answer:2131034112
+ drawable:ic_call_answer_low:2131034113
+ drawable:ic_call_answer_video:2131034114
+ drawable:ic_call_answer_video_low:2131034115
+ drawable:ic_call_decline:2131034116
+ drawable:ic_call_decline_low:2131034117
+ drawable:notification_action_background:2131034118
+ drawable:notification_bg:2131034119
+ drawable:notification_bg_low:2131034120
+ drawable:notification_bg_low_normal:2131034121
+ drawable:notification_bg_low_pressed:2131034122
+ drawable:notification_bg_normal:2131034123
+ drawable:notification_bg_normal_pressed:2131034124
+ drawable:notification_icon_background:2131034125
+ drawable:notification_oversize_large_icon_bg:2131034126
+ drawable:notification_template_icon_bg:2131034127
+ drawable:notification_template_icon_low_bg:2131034128
+ drawable:notification_tile_bg:2131034129
+ drawable:notify_panel_notification_icon_bg:2131034130
+ id:action_container:2131099681
+ id:action_divider:2131099682
+ id:action_image:2131099683
+ id:action_text:2131099684
+ id:actions:2131099685
+ id:async:2131099687
+ id:blocking:2131099688
+ id:chronometer:2131099689
+ id:dialog_button:2131099692
+ id:edit_text_id:2131099693
+ id:forever:2131099694
+ id:hide_ime_id:2131099695
+ id:icon:2131099697
+ id:icon_group:2131099698
+ id:info:2131099699
+ id:italic:2131099702
+ id:line1:2131099703
+ id:line3:2131099704
+ id:normal:2131099705
+ id:notification_background:2131099706
+ id:notification_main_column:2131099707
+ id:notification_main_column_container:2131099708
+ id:right_icon:2131099711
+ id:right_side:2131099712
+ id:tag_on_receive_content_listener:2131099718
+ id:tag_on_receive_content_mime_types:2131099719
+ id:tag_transition_group:2131099722
+ id:text:2131099726
+ id:text2:2131099727
+ id:time:2131099728
+ id:title:2131099729
+ integer:status_bar_notification_info_maxnum:2131165184
+ layout:custom_dialog:2131230720
+ layout:ime_base_split_test_activity:2131230721
+ layout:ime_secondary_split_test_activity:2131230722
+ layout:notification_action:2131230723
+ layout:notification_action_tombstone:2131230724
+ layout:notification_template_custom_big:2131230725
+ layout:notification_template_icon_group:2131230726
+ layout:notification_template_part_chronometer:2131230727
+ layout:notification_template_part_time:2131230728
+ string:call_notification_answer_action:2131361799
+ string:call_notification_answer_video_action:2131361800
+ string:call_notification_decline_action:2131361801
+ string:call_notification_hang_up_action:2131361802
+ string:call_notification_incoming_text:2131361803
+ string:call_notification_ongoing_text:2131361804
+ string:call_notification_screening_text:2131361805
+ string:notification_channel_description:2131361850
+ string:notification_channel_name:2131361851
+ string:status_bar_notification_info_overflow:2131361859
+ string:tooltip_description:2131361876
+ string:tooltip_label:2131361877
+ style:FloatingDialogTheme:2131427329
+ style:FloatingDialogWindowTheme:2131427330
+ style:TextAppearance_Compat_Notification:2131427331
+ style:TextAppearance_Compat_Notification_Info:2131427332
+ style:TextAppearance_Compat_Notification_Line2:2131427333
+ style:TextAppearance_Compat_Notification_Time:2131427334
+ style:TextAppearance_Compat_Notification_Title:2131427335
+ style:Widget_Compat_NotificationActionContainer:2131427337
+ style:Widget_Compat_NotificationActionText:2131427338

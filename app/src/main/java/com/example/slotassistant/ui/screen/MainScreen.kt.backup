@@ -1,0 +1,499 @@
+package com.example.slotassistant.ui.screen
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.example.slotassistant.viewmodel.MainViewModel
+import java.text.SimpleDateFormat
+import java.util.*
+
+/**
+ * Ana Compose Ekranı
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainScreen(viewModel: MainViewModel) {
+    val uiState by viewModel.uiState.collectAsState()
+    val preferredStartTime by viewModel.preferredStartTime.collectAsState()
+    val preferredEndTime by viewModel.preferredEndTime.collectAsState()
+    val scheduleHour by viewModel.scheduleHour.collectAsState()
+    val scheduleMinute by viewModel.scheduleMinute.collectAsState()
+    val isWorkScheduled by viewModel.isWorkScheduled.collectAsState()
+    
+    var showStartTimePicker by remember { mutableStateOf(false) }
+    var showEndTimePicker by remember { mutableStateOf(false) }
+    var showScheduleTimePicker by remember { mutableStateOf(false) }
+    
+    var selectedStartHour by remember { mutableStateOf(16) }
+    var selectedStartMinute by remember { mutableStateOf(15) }
+    var selectedEndHour by remember { mutableStateOf(19) }
+    var selectedEndMinute by remember { mutableStateOf(15) }
+    var selectedScheduleHour by remember { mutableStateOf(scheduleHour) }
+    var selectedScheduleMinute by remember { mutableStateOf(scheduleMinute) }
+    
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Otomatik Slot Asistanı") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            )
+        },
+        snackbarHost = {
+            if (uiState is MainViewModel.UiState.Success || uiState is MainViewModel.UiState.Error) {
+                Snackbar(
+                    modifier = Modifier.padding(16.dp),
+                    action = {
+                        TextButton(onClick = { viewModel.resetUiState() }) {
+                            Text("KAPAT")
+                        }
+                    }
+                ) {
+                    Text(
+                        when (uiState) {
+                            is MainViewModel.UiState.Success -> (uiState as MainViewModel.UiState.Success).message
+                            is MainViewModel.UiState.Error -> (uiState as MainViewModel.UiState.Error).message
+                            else -> ""
+                        }
+                    )
+                }
+            }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // Başlık
+            Text(
+                text = "Hoş Geldiniz! 👋",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
+            
+            Text(
+                text = "Bu uygulama belirlediğiniz saat aralığında otomatik olarak slot kontrol edip rezerve eder.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            
+            Divider()
+            
+            // Bölüm 1: Tercih Edilen Saat Aralığı
+            PreferenceTimeSection(
+                startTime = preferredStartTime,
+                endTime = preferredEndTime,
+                onStartTimeClick = { showStartTimePicker = true },
+                onEndTimeClick = { showEndTimePicker = true },
+                onSave = { start, end ->
+                    viewModel.saveTimePreference(start, end)
+                },
+                selectedStartHour = selectedStartHour,
+                selectedStartMinute = selectedStartMinute,
+                selectedEndHour = selectedEndHour,
+                selectedEndMinute = selectedEndMinute,
+                onStartHourChange = { selectedStartHour = it },
+                onStartMinuteChange = { selectedStartMinute = it },
+                onEndHourChange = { selectedEndHour = it },
+                onEndMinuteChange = { selectedEndMinute = it }
+            )
+            
+            Divider()
+            
+            // Bölüm 2: Otomatik Kontrol Zamanı
+            ScheduleTimeSection(
+                scheduleHour = scheduleHour,
+                scheduleMinute = scheduleMinute,
+                isWorkScheduled = isWorkScheduled,
+                onScheduleTimeClick = { showScheduleTimePicker = true },
+                onSchedule = { hour, minute ->
+                    viewModel.scheduleWork(hour, minute)
+                },
+                onCancel = {
+                    viewModel.cancelWork()
+                },
+                selectedScheduleHour = selectedScheduleHour,
+                selectedScheduleMinute = selectedScheduleMinute,
+                onScheduleHourChange = { selectedScheduleHour = it },
+                onScheduleMinuteChange = { selectedScheduleMinute = it }
+            )
+            
+            Divider()
+            
+            // Bölüm 3: Test ve Durum
+            TestSection(
+                onTestClick = { viewModel.checkNow() },
+                isLoading = uiState is MainViewModel.UiState.Loading
+            )
+            
+            // Durum Göstergesi
+            if (uiState is MainViewModel.UiState.Loading) {
+                LinearProgressIndicator(
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+    }
+    
+    // Time Pickers
+    if (showStartTimePicker) {
+        TimePickerDialog(
+            title = "Başlangıç Saati",
+            hour = selectedStartHour,
+            minute = selectedStartMinute,
+            onDismiss = { showStartTimePicker = false },
+            onConfirm = { hour, minute ->
+                selectedStartHour = hour
+                selectedStartMinute = minute
+                showStartTimePicker = false
+            }
+        )
+    }
+    
+    if (showEndTimePicker) {
+        TimePickerDialog(
+            title = "Bitiş Saati",
+            hour = selectedEndHour,
+            minute = selectedEndMinute,
+            onDismiss = { showEndTimePicker = false },
+            onConfirm = { hour, minute ->
+                selectedEndHour = hour
+                selectedEndMinute = minute
+                showEndTimePicker = false
+            }
+        )
+    }
+    
+    if (showScheduleTimePicker) {
+        TimePickerDialog(
+            title = "Kontrol Saati",
+            hour = selectedScheduleHour,
+            minute = selectedScheduleMinute,
+            onDismiss = { showScheduleTimePicker = false },
+            onConfirm = { hour, minute ->
+                selectedScheduleHour = hour
+                selectedScheduleMinute = minute
+                showScheduleTimePicker = false
+            }
+        )
+    }
+}
+
+@Composable
+fun PreferenceTimeSection(
+    startTime: String,
+    endTime: String,
+    onStartTimeClick: () -> Unit,
+    onEndTimeClick: () -> Unit,
+    onSave: (String, String) -> Unit,
+    selectedStartHour: Int,
+    selectedStartMinute: Int,
+    selectedEndHour: Int,
+    selectedEndMinute: Int,
+    onStartHourChange: (Int) -> Unit,
+    onStartMinuteChange: (Int) -> Unit,
+    onEndHourChange: (Int) -> Unit,
+    onEndMinuteChange: (Int) -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Schedule,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Tercih Edilen Saat Aralığı",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            
+            if (startTime.isNotEmpty() && endTime.isNotEmpty()) {
+                Text(
+                    text = "Mevcut: $startTime - $endTime",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedButton(
+                    onClick = onStartTimeClick,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Başlangıç: ${selectedStartHour.toString().padStart(2, '0')}:${selectedStartMinute.toString().padStart(2, '0')}")
+                }
+                
+                OutlinedButton(
+                    onClick = onEndTimeClick,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Bitiş: ${selectedEndHour.toString().padStart(2, '0')}:${selectedEndMinute.toString().padStart(2, '0')}")
+                }
+            }
+            
+            Button(
+                onClick = {
+                    val start = "${selectedStartHour.toString().padStart(2, '0')}:${selectedStartMinute.toString().padStart(2, '0')}"
+                    val end = "${selectedEndHour.toString().padStart(2, '0')}:${selectedEndMinute.toString().padStart(2, '0')}"
+                    onSave(start, end)
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(Icons.Default.Save, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Tercihleri Kaydet")
+            }
+        }
+    }
+}
+
+@Composable
+fun ScheduleTimeSection(
+    scheduleHour: Int,
+    scheduleMinute: Int,
+    isWorkScheduled: Boolean,
+    onScheduleTimeClick: () -> Unit,
+    onSchedule: (Int, Int) -> Unit,
+    onCancel: () -> Unit,
+    selectedScheduleHour: Int,
+    selectedScheduleMinute: Int,
+    onScheduleHourChange: (Int) -> Unit,
+    onScheduleMinuteChange: (Int) -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isWorkScheduled) 
+                MaterialTheme.colorScheme.secondaryContainer 
+            else 
+                MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = if (isWorkScheduled) Icons.Default.CheckCircle else Icons.Default.PlayArrow,
+                    contentDescription = null,
+                    tint = if (isWorkScheduled) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Column {
+                    Text(
+                        text = "Otomatik Kontrol",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = if (isWorkScheduled) "Aktif ✅" else "Pasif",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (isWorkScheduled) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+            
+            Text(
+                text = "Her Çarşamba saat ${selectedScheduleHour.toString().padStart(2, '0')}:${selectedScheduleMinute.toString().padStart(2, '0')}'da otomatik kontrol yapılacak",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            
+            OutlinedButton(
+                onClick = onScheduleTimeClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(Icons.Default.AccessTime, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Kontrol Saatini Ayarla: ${selectedScheduleHour.toString().padStart(2, '0')}:${selectedScheduleMinute.toString().padStart(2, '0')}")
+            }
+            
+            if (isWorkScheduled) {
+                OutlinedButton(
+                    onClick = onCancel,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Icon(Icons.Default.Cancel, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Otomatik Kontrolü İptal Et")
+                }
+            } else {
+                Button(
+                    onClick = { onSchedule(selectedScheduleHour, selectedScheduleMinute) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(Icons.Default.PlayArrow, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Otomatik Kontrolü Başlat")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TestSection(
+    onTestClick: () -> Unit,
+    isLoading: Boolean
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Science,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.tertiary
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Test ve Anlık Kontrol",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            
+            Text(
+                text = "Otomatik kontrolü beklemeden hemen slot kontrolü yapabilirsiniz. Sonuç bildirim olarak gelecektir.",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            
+            Button(
+                onClick = onTestClick,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !isLoading
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Icon(Icons.Default.PlayCircle, contentDescription = null)
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(if (isLoading) "Kontrol Ediliyor..." else "Şimdi Kontrol Et")
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimePickerDialog(
+    title: String,
+    hour: Int,
+    minute: Int,
+    onDismiss: () -> Unit,
+    onConfirm: (Int, Int) -> Unit
+) {
+    var selectedHour by remember { mutableStateOf(hour) }
+    var selectedMinute by remember { mutableStateOf(minute) }
+    
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title) },
+        text = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Saat seçici
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text("Saat", style = MaterialTheme.typography.labelSmall)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            IconButton(onClick = { selectedHour = (selectedHour - 1 + 24) % 24 }) {
+                                Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Azalt")
+                            }
+                        }
+                        Text(
+                            text = selectedHour.toString().padStart(2, '0'),
+                            style = MaterialTheme.typography.headlineLarge
+                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            IconButton(onClick = { selectedHour = (selectedHour + 1) % 24 }) {
+                                Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Artır")
+                            }
+                        }
+                    }
+                    
+                    Text(":", style = MaterialTheme.typography.headlineLarge)
+                    
+                    // Dakika seçici
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text("Dakika", style = MaterialTheme.typography.labelSmall)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            IconButton(onClick = { selectedMinute = (selectedMinute - 15 + 60) % 60 }) {
+                                Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Azalt")
+                            }
+                        }
+                        Text(
+                            text = selectedMinute.toString().padStart(2, '0'),
+                            style = MaterialTheme.typography.headlineLarge
+                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            IconButton(onClick = { selectedMinute = (selectedMinute + 15) % 60 }) {
+                                Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Artır")
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onConfirm(selectedHour, selectedMinute) }) {
+                Text("TAMAM")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("İPTAL")
+            }
+        }
+    )
+}

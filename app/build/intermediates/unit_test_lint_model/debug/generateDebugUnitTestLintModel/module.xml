@@ -1,0 +1,17 @@
+<lint-module
+    format="1"
+    dir="/Users/halilalbayrak/Desktop/new-project/app"
+    name=":app"
+    type="APP"
+    maven="Slot Assistant:app:unspecified"
+    agpVersion="8.13.2"
+    buildFolder="build"
+    bootClassPath="/Users/halilalbayrak/Library/Android/sdk/platforms/android-34/android.jar:/Users/halilalbayrak/Library/Android/sdk/build-tools/35.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="17"
+    compileTarget="android-34">
+  <lintOptions
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="debug"/>
+</lint-module>
