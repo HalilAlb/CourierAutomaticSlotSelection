@@ -21,7 +21,7 @@ Android'in **Erişilebilirlik** özelliği. Görme engelliler için ekranı okuy
 
 ### 1. **Kurye Uygulamasını Tespit Eder**
 ```kotlin
-COURIER_APP_PACKAGE = "com.yemeksepeti.courier" // Gerçek paket adı
+COURIER_APP_PACKAGE = "com.logistics.rider.yemeksepeti" // Gerçek paket adı
 ```
 
 ### 2. **Giriş Ekranını Bulur**
@@ -52,7 +52,7 @@ performSlotSelection()
 
 ## 🚨 ÖNEMLİ: Gerçek Paket Adı Gerekli
 
-**Şu anki kod "com.yemeksepeti.courier" olarak ayarlı, ama bu PLACEHOLDER!**
+**Doğru paket adı bulundu: "com.logistics.rider.yemeksepeti"**
 
 ### Gerçek Paket Adını Bulmak İçin:
 
@@ -62,8 +62,8 @@ performSlotSelection()
 adb shell dumpsys window | grep mCurrentFocus
 
 # Çıktı:
-mCurrentFocus=Window{... com.yemeksepeti.express/...}
-                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+mCurrentFocus=Window{... com.logistics.rider.yemeksepeti/...}
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                           GERÇEK PAKET ADI
 ```
 
@@ -107,7 +107,7 @@ adb shell dumpsys window | grep mCurrentFocus
 ### ✅ 2. Koda Yaz
 **Dosya:** `CourierAccessibilityService.kt` → 26. satır
 ```kotlin
-private const val COURIER_APP_PACKAGE = "BURAYA_GERÇEK_PAKET_ADI"
+private const val COURIER_APP_PACKAGE = "com.logistics.rider.yemeksepeti"
 ```
 
 ### ✅ 3. Uygulamayı Kur

@@ -65,16 +65,49 @@ class SlotRepository(
         preferredStartTime: String,
         preferredEndTime: String
     ): Result<Slot?> = withContext(Dispatchers.IO) {
+        android.util.Log.d("SlotRepository", "━━━ SLOT ARAMA BAŞLADI ━━━")
+        android.util.Log.d("SlotRepository", "Aranan Tarih: $date")
+        android.util.Log.d("SlotRepository", "Aranan Başlangıç: '$preferredStartTime' (Uzunluk: ${preferredStartTime.length})")
+        android.util.Log.d("SlotRepository", "Aranan Bitiş: '$preferredEndTime' (Uzunluk: ${preferredEndTime.length})")
+        
         when (val slotsResult = getAvailableSlots(date)) {
             is Result.Success -> {
-                val matchingSlot = slotsResult.data.find { slot ->
+                val availableSlots = slotsResult.data
+                android.util.Log.d("SlotRepository", "Toplam ${availableSlots.size} slot bulundu")
+                
+                availableSlots.forEachIndexed { index, slot ->
+                    android.util.Log.d("SlotRepository", "Slot $index: Başlangıç='${slot.startTime}' (${slot.startTime.length}), Bitiş='${slot.endTime}' (${slot.endTime.length}), Müsait=${slot.isAvailable}")
+                    
+                    // Detaylı karşılaştırma
+                    val startMatches = slot.startTime == preferredStartTime
+                    val endMatches = slot.endTime == preferredEndTime
+                    android.util.Log.d("SlotRepository", "  → Başlangıç eşleşiyor: $startMatches, Bitiş eşleşiyor: $endMatches, Müsait: ${slot.isAvailable}")
+                    
+                    if (!startMatches && slot.startTime.trim() == preferredStartTime.trim()) {
+                        android.util.Log.w("SlotRepository", "  ⚠️ UYARI: Trim sonrası eşleşiyor! Boşluk karakteri sorunu olabilir")
+                    }
+                }
+                
+                val matchingSlot = availableSlots.find { slot ->
                     slot.isAvailable && 
                     slot.startTime == preferredStartTime && 
                     slot.endTime == preferredEndTime
                 }
+                
+                if (matchingSlot != null) {
+                    android.util.Log.d("SlotRepository", "✅ SLOT BULUNDU: ${matchingSlot.id} (${matchingSlot.startTime} - ${matchingSlot.endTime})")
+                } else {
+                    android.util.Log.w("SlotRepository", "❌ EŞLEŞEN SLOT BULUNAMADI!")
+                    android.util.Log.w("SlotRepository", "Aranan: $preferredStartTime - $preferredEndTime")
+                }
+                android.util.Log.d("SlotRepository", "━━━ SLOT ARAMA BİTTİ ━━━")
+                
                 Result.Success(matchingSlot)
             }
-            is Result.Error -> slotsResult
+            is Result.Error -> {
+                android.util.Log.e("SlotRepository", "API Hatası: ${slotsResult.message}")
+                slotsResult
+            }
             else -> Result.Error("Beklenmeyen durum")
         }
     }

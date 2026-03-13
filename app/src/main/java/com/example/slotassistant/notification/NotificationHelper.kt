@@ -25,7 +25,8 @@ class NotificationHelper(private val context: Context) {
         const val NOTIFICATION_ID_INFO = 1003
         
         // Sessiz mod - bildirimleri minimize eder
-        var SILENT_MODE = true
+        // TEST için kapalı - bildirimleri görmek için
+        var SILENT_MODE = false
     }
     
     private val notificationManager = 

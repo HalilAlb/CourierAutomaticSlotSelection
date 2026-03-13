@@ -97,7 +97,7 @@ Android Accessibility Service kullanarak Yemeksepeti uygulamasının ekranını 
 class YemeksepetiAccessibilityService : AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         // Yemeksepeti uygulamasındaki slot bilgilerini oku
-        if (event.packageName == "com.yemeksepeti.android") {
+        if (event.packageName == "com.logistics.rider.yemeksepeti") {
             // Ekrandan veri çek
         }
     }

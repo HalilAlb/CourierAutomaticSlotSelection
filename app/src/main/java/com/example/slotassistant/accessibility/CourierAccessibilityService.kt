@@ -21,14 +21,9 @@ class CourierAccessibilityService : AccessibilityService() {
     companion object {
         private const val TAG = "CourierAccessibility"
         
-        // Kurye uygulamasının package name'i buraya yazılacak
-        // adb shell dumpsys window | grep mCurrentFocus komutuyla bul
-        // Örnek: "com.yemeksepeti.courier"
-        private const val COURIER_APP_PACKAGE = "com.yemeksepeti.courier"
-        
         // DEBUG MOD - Tüm UI elementlerini loglamak için true yap
         // Kurye uygulamanızın yapısını öğrendikten sonra false yapın
-        private const val DEBUG_MODE = false
+        private const val DEBUG_MODE = true // ✅ Test için açık
         
         // İnsan benzeri davranış için rastgele gecikme aralıkları (ms)
         private const val MIN_HUMAN_DELAY = 800L
@@ -38,15 +33,22 @@ class CourierAccessibilityService : AccessibilityService() {
     }
     
     private lateinit var preferencesManager: PreferencesManager
+    private var courierAppPackage: String = "com.logistics.rider.yemeksepeti" // Varsayılan
     private var isLoginAttempted = false
     private var isSlotSelectionActive = false
     private var isNavigatingToSlots = false
+    private var isWaitingForConfirmation = false
+    private var isDaySelected = false // Gün seçildi mi?
     private var lastNavigationAttempt = 0L
     private val NAVIGATION_COOLDOWN = 5000L // 5 saniye cooldown
     
     override fun onServiceConnected() {
         super.onServiceConnected()
         preferencesManager = PreferencesManager(applicationContext)
+        
+        // Paket adını yükle
+        courierAppPackage = preferencesManager.getCourierAppPackage()
+        if (DEBUG_MODE) Log.d(TAG, "Kurye uygulaması paket adı: $courierAppPackage")
         
         val info = AccessibilityServiceInfo().apply {
             eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or 
@@ -55,28 +57,47 @@ class CourierAccessibilityService : AccessibilityService() {
             
             feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
             flags = AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS
-            packageNames = arrayOf(COURIER_APP_PACKAGE)
+            packageNames = arrayOf(courierAppPackage)
         }
         
         serviceInfo = info
-        if (DEBUG_MODE) Log.d(TAG, "Accessibility Service başlatıldı")
+        if (DEBUG_MODE) Log.d(TAG, "Accessibility Service başlatıldı - İzlenen paket: $courierAppPackage")
     }
     
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         event ?: return
         
-        if (event.packageName != COURIER_APP_PACKAGE) return
+        // Paket adını kontrol et
+        if (event.packageName != courierAppPackage) {
+            if (DEBUG_MODE && event.packageName != null) {
+                Log.d(TAG, "Farklı uygulama tespit edildi: ${event.packageName} (Beklenen: $courierAppPackage)")
+            }
+            return
+        }
         
         val rootNode = rootInActiveWindow ?: return
         
         try {
             // DEBUG: Tüm ekran yapısını logla
-            if (DEBUG_MODE && event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-                Log.d(TAG, "=== YENİ EKRAN TESPİT EDİLDİ ===")
-                Log.d(TAG, "Paket: ${event.packageName}")
-                Log.d(TAG, "Sınıf: ${event.className}")
-                logNodeHierarchy(rootNode, 0)
-                Log.d(TAG, "=== EKRAN YAPISI BİTTİ ===")
+            if (DEBUG_MODE) {
+                when (event.eventType) {
+                    AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
+                        Log.d(TAG, "=== YENİ EKRAN TESPİT EDİLDİ ===")
+                        Log.d(TAG, "Paket: ${event.packageName}")
+                        Log.d(TAG, "Sınıf: ${event.className}")
+                        logNodeHierarchy(rootNode, 0)
+                        Log.d(TAG, "=== EKRAN YAPISI BİTTİ ===")
+                    }
+                    AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED -> {
+                        // WebView içeriği değiştiğinde (günler, slotlar yüklendiğinde)
+                        if (event.className?.contains("WebView") == true || 
+                            rootNode.findAccessibilityNodeInfosByViewId("com.logistics.rider.yemeksepeti:id/webView").isNotEmpty()) {
+                            Log.d(TAG, "📱 WEBVIEW İÇERİK DEĞİŞİMİ 📱")
+                            logNodeHierarchy(rootNode, 0)
+                            Log.d(TAG, "📱 WEBVIEW İÇERİK BİTTİ 📱")
+                        }
+                    }
+                }
             }
             
             when {
@@ -84,6 +105,12 @@ class CourierAccessibilityService : AccessibilityService() {
                 isLoginScreen(rootNode) && !isLoginAttempted -> {
                     if (DEBUG_MODE) Log.d(TAG, "Giriş ekranı tespit edildi")
                     performAutoLogin(rootNode)
+                }
+                
+                // Onay ekranı - Slot ayırt butonu
+                isWaitingForConfirmation && isConfirmationDialog(rootNode) -> {
+                    if (DEBUG_MODE) Log.d(TAG, "Onay ekranı tespit edildi")
+                    confirmSlotReservation(rootNode)
                 }
                 
                 // Ana sayfa - slot ekranına git
@@ -100,7 +127,19 @@ class CourierAccessibilityService : AccessibilityService() {
                 isSlotSelectionScreen(rootNode) -> {
                     if (DEBUG_MODE) Log.d(TAG, "Slot seçim ekranı tespit edildi")
                     isNavigatingToSlots = false
-                    performSlotSelection(rootNode)
+                    
+                    // Slot ekranına yeni girildiğinde gün seçimini resetle
+                    if (!isSlotSelectionActive) {
+                        isDaySelected = false
+                        if (DEBUG_MODE) Log.d(TAG, "Gün seçimi resetlendi (yeni ekran)")
+                    }
+                    
+                    // Önce günü seç, sonra slotu seç
+                    if (!isDaySelected) {
+                        selectPreferredDay(rootNode)
+                    } else {
+                        performSlotSelection(rootNode)
+                    }
                 }
                 
                 // Ana sayfa - giriş başarılı
@@ -142,9 +181,175 @@ class CourierAccessibilityService : AccessibilityService() {
      */
     private fun isSlotSelectionScreen(rootNode: AccessibilityNodeInfo): Boolean {
         // Slot ekranını tanımak için kullanılabilecek kelimeler
-        val slotKeywords = listOf("slot", "vardiya", "seç", "select", "saat", "time", "çalışma saatleri", "work hours")
+        // Loglardan gördük: "Müsait slotlar", "Ayırt", "Yaklaşan Slotlar"
+        val slotKeywords = listOf("Müsait slot", "Yaklaşan slot", "Ayırt", "March 2026")
         
         return findNodesByText(rootNode, slotKeywords).isNotEmpty()
+    }
+    
+    /**
+     * Onay ekranını (dialog) kontrol eder
+     */
+    private fun isConfirmationDialog(rootNode: AccessibilityNodeInfo): Boolean {
+        // Onay ekranında olabilecek kelimeler
+        val confirmKeywords = listOf("slot ayırt", "onayla", "confirm", "rezervasyon", "emin misiniz")
+        
+        return findNodesByText(rootNode, confirmKeywords).isNotEmpty()
+    }
+    
+    /**
+     * Tercih edilen günü seçer
+     * Kullanıcının seçtiği hafta (0=bu hafta, 1=gelecek hafta) ve günleri kullanır
+     */
+    private fun selectPreferredDay(rootNode: AccessibilityNodeInfo) {
+        // Kullanıcının seçtiği hafta (0=bu hafta, 1=gelecek hafta)
+        val weeksAhead = preferencesManager.getWeeksAhead()
+        
+        // Tercih edilen günleri al
+        val selectedDays = preferencesManager.getSelectedDays()
+        
+        if (DEBUG_MODE) {
+            val weekText = if (weeksAhead == 0) "Bu hafta" else "Gelecek hafta"
+            Log.d(TAG, "=== GÜN SEÇİMİ DEBUG ===")
+            Log.d(TAG, "PreferencesManager.getWeeksAhead() = $weeksAhead")
+            Log.d(TAG, "Hafta metni: $weekText")
+            Log.d(TAG, "Seçili günler: $selectedDays")
+        }
+        
+        if (selectedDays.isEmpty()) {
+            if (DEBUG_MODE) Log.w(TAG, "Seçili gün yok, mevcut gün kullanılacak")
+            isDaySelected = true
+            return
+        }
+        
+        // İlk seçili günü kullan
+        val firstSelectedDay = selectedDays.first()
+        
+        // WorkDay'i gün kısaltmasına çevir
+        val dayOfWeek = when (firstSelectedDay) {
+            "MONDAY" -> "Pt"
+            "TUESDAY" -> "Sa"
+            "WEDNESDAY" -> "Ça"
+            "THURSDAY" -> "Pe"
+            "FRIDAY" -> "Cu"
+            "SATURDAY" -> "Ct"
+            "SUNDAY" -> "Pz"
+            else -> ""
+        }
+        
+        if (dayOfWeek.isEmpty()) {
+            if (DEBUG_MODE) Log.w(TAG, "Geçersiz gün: $firstSelectedDay")
+            isDaySelected = true
+            return
+        }
+        
+        // Hedef tarihi hesapla
+        val targetDateText = calculateTargetDate(dayOfWeek, weeksAhead)
+        
+        if (targetDateText.isEmpty()) {
+            if (DEBUG_MODE) Log.w(TAG, "❌ Hedef tarih hesaplanamadı")
+            isDaySelected = true
+            return
+        }
+        
+        if (DEBUG_MODE) Log.d(TAG, "🎯 Aranan gün butonu: '$targetDateText' ($firstSelectedDay)")
+        
+        // Gün butonunu bul (örn: "Cu 20")
+        val dayButton = findNodesByText(rootNode, listOf(targetDateText)).firstOrNull { 
+            it.isClickable && it.isEnabled 
+        }
+        
+        if (dayButton != null) {
+            humanDelay()
+            dayButton.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            isDaySelected = true
+            if (DEBUG_MODE) Log.d(TAG, "✅ Gün butonu tıklandı: $targetDateText")
+        } else {
+            if (DEBUG_MODE) Log.w(TAG, "❌ Gün butonu bulunamadı: $targetDateText (mevcut gün kullanılacak)")
+            isDaySelected = true
+        }
+    }
+    
+    /**
+     * Tercih edilen gün ve hafta bilgisinden hedef tarihi hesaplar
+     * @param dayOfWeek Gün kısaltması: "Cu", "Pe", "Ct" vb.
+     * @param weeksAhead Kaç hafta sonrası: 0 = bu hafta, 1 = gelecek hafta
+     * @return Buton metni (örn: "Cu 20") veya boş string
+     */
+    private fun calculateTargetDate(dayOfWeek: String, weeksAhead: Int): String {
+        try {
+            // Gün kısaltmalarını Java Calendar.DAY_OF_WEEK değerleriyle eşle
+            val dayMap = mapOf(
+                "Pz" to java.util.Calendar.SUNDAY,    // 1
+                "Pt" to java.util.Calendar.MONDAY,    // 2
+                "Sa" to java.util.Calendar.TUESDAY,   // 3
+                "Ça" to java.util.Calendar.WEDNESDAY, // 4
+                "Pe" to java.util.Calendar.THURSDAY,  // 5
+                "Cu" to java.util.Calendar.FRIDAY,    // 6
+                "Ct" to java.util.Calendar.SATURDAY   // 7
+            )
+            
+            val targetDayOfWeek = dayMap[dayOfWeek] ?: return ""
+            
+            // Bugünün tarihi
+            val calendar = java.util.Calendar.getInstance()
+            val today = calendar.get(java.util.Calendar.DAY_OF_WEEK)
+            val todayDate = calendar.get(java.util.Calendar.DAY_OF_MONTH)
+            
+            // Hedef güne kadar kaç gün var
+            var daysToAdd = (targetDayOfWeek - today + 7) % 7
+            if (daysToAdd == 0 && weeksAhead > 0) {
+                daysToAdd = 7 // Aynı gün ama gelecek hafta
+            }
+            
+            // Hafta sayısını ekle
+            daysToAdd += (weeksAhead * 7)
+            
+            // Tarihi hesapla
+            calendar.add(java.util.Calendar.DAY_OF_MONTH, daysToAdd)
+            val targetDay = calendar.get(java.util.Calendar.DAY_OF_MONTH)
+            
+            if (DEBUG_MODE) {
+                Log.d(TAG, "📅 Tarih hesaplama: Bugün=$todayDate, Hedef gün=$dayOfWeek, Eklenecek gün=$daysToAdd, Sonuç=$targetDay")
+            }
+            
+            // Buton metni: "Cu 20"
+            return "$dayOfWeek $targetDay"
+            
+        } catch (e: Exception) {
+            if (DEBUG_MODE) Log.e(TAG, "Tarih hesaplama hatası: ${e.message}")
+            return ""
+        }
+    }
+    
+    /**
+     * Slot rezervasyonunu onaylar
+     */
+    private fun confirmSlotReservation(rootNode: AccessibilityNodeInfo) {
+        // "Slot ayırt", "Onayla", "Confirm" gibi butonları ara
+        val confirmButton = findNodesByText(rootNode, listOf("slot ayırt", "onayla", "confirm", "tamam", "ok")).firstOrNull { node ->
+            node.isClickable || node.parent?.isClickable == true || node.parent?.parent?.isClickable == true
+        }
+        
+        if (confirmButton != null) {
+            // Tıklanabilir parent'ı bul
+            val clickableNode = when {
+                confirmButton.isClickable -> confirmButton
+                confirmButton.parent?.isClickable == true -> confirmButton.parent
+                confirmButton.parent?.parent?.isClickable == true -> confirmButton.parent?.parent
+                else -> null
+            }
+            
+            clickableNode?.let {
+                humanDelay()
+                it.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                if (DEBUG_MODE) Log.d(TAG, "✅ Slot rezervasyonu onaylandı!")
+                isWaitingForConfirmation = false
+                isSlotSelectionActive = false
+            }
+        } else {
+            if (DEBUG_MODE) Log.w(TAG, "Onay butonu bulunamadı")
+        }
     }
     
     /**
@@ -153,38 +358,42 @@ class CourierAccessibilityService : AccessibilityService() {
     private fun navigateToSlotScreen(rootNode: AccessibilityNodeInfo) {
         isNavigatingToSlots = true
         
-        // Slot ekranına gitme butonunu bul
-        // Olası buton metinleri: "Slot Seç", "Vardiya", "Çalışma Saatleri", "Slotlar", vb.
-        val navigationKeywords = listOf(
-            "slot", "vardiya", "çalışma saatleri", "work hours",
-            "saat seç", "slot seç", "blok seç", "zaman seç"
-        )
+        // Loglardan gördük: "Müsait slotları görüntüle" butonu var
+        val viewSlotsButton = findNodesByText(rootNode, listOf("müsait slotları görüntüle")).firstOrNull { node ->
+            node.isClickable || node.parent?.isClickable == true || node.parent?.parent?.isClickable == true
+        }
         
-        val slotButton = findNodesByText(rootNode, navigationKeywords).firstOrNull { node ->
+        if (viewSlotsButton != null) {
+            // Tıklanabilir parent'ı bul
+            val clickableNode = when {
+                viewSlotsButton.isClickable -> viewSlotsButton
+                viewSlotsButton.parent?.isClickable == true -> viewSlotsButton.parent
+                viewSlotsButton.parent?.parent?.isClickable == true -> viewSlotsButton.parent?.parent
+                else -> null
+            }
+            
+            clickableNode?.let {
+                humanDelay()
+                it.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                if (DEBUG_MODE) Log.d(TAG, "Müsait slotları görüntüle butonu tıklandı")
+            }
+            return
+        }
+        
+        // Alternatif: Yan menüden "Müsait slotlar" seçeneği
+        val menuSlotOption = findNodesByText(rootNode, listOf("müsait slotlar")).firstOrNull { node ->
             node.isClickable || node.parent?.isClickable == true
         }
         
-        if (slotButton != null) {
-            val clickableNode = if (slotButton.isClickable) slotButton else slotButton.parent
-            clickableNode?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-            Log.d(TAG, "Slot ekranı butonu tıklandı")
-        } else {
-            // Buton bulunamadı, menü/hamburger butonunu dene
-            val menuButton = findNodesByResourceId(rootNode, listOf(
-                "menu", "navigation", "drawer", "toolbar"
-            )).firstOrNull { it.isClickable }
-            
-            menuButton?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-            if (DEBUG_MODE) Log.d(TAG, "Menü butonu tıklandı, slot seçeneği bekleniyor")
-            
-            // Menü açıldıktan sonra slot butonunu ara
-            Thread.sleep(1000)
-            rootInActiveWindow?.let { root ->
-                val menuSlotButton = findNodesByText(root, navigationKeywords).firstOrNull { it.isClickable }
-                menuSlotButton?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                if (DEBUG_MODE) Log.d(TAG, "Menüden slot seçeneği tıklandı")
-                root.recycle()
+        if (menuSlotOption != null) {
+            val clickableNode = if (menuSlotOption.isClickable) menuSlotOption else menuSlotOption.parent
+            clickableNode?.let {
+                humanDelay()
+                it.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                if (DEBUG_MODE) Log.d(TAG, "Menüden müsait slotlar seçildi")
             }
+        } else {
+            if (DEBUG_MODE) Log.w(TAG, "Slot ekranına gitme butonu bulunamadı")
         }
     }
     
@@ -253,35 +462,200 @@ class CourierAccessibilityService : AccessibilityService() {
                 return
             }
             
-            // Her bir tercih için slot ara ve insan gibi seç
+            if (DEBUG_MODE) Log.d(TAG, "Tercih edilen slotlar: ${timePreferences.map { "${it.startTime}-${it.endTime}" }}")
+            
+            // Her bir tercih için slot ara
             for (preference in timePreferences) {
-                val slotText = "${preference.startTime}-${preference.endTime}"
-                val slotNodes = findNodesByText(rootNode, listOf(slotText, preference.startTime))
+                if (DEBUG_MODE) Log.d(TAG, "Aranan slot: ${preference.startTime} - ${preference.endTime}")
                 
-                for (node in slotNodes) {
-                    if (node.isClickable || node.parent?.isClickable == true) {
-                        humanDelay() // İnsan benzeri rastgele gecikme
-                        val clickableNode = if (node.isClickable) node else node.parent
-                        clickableNode?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                        if (DEBUG_MODE) Log.d(TAG, "Slot seçildi: $slotText")
+                // Başlangıç ve bitiş saatlerini ayrı ayrı bul
+                // Kurye uygulamasında slotlar üç ayrı TextView: "23:45", " – ", "01:15"
+                val startTimeNodes = findNodesByExactText(rootNode, preference.startTime)
+                
+                if (DEBUG_MODE) Log.d(TAG, "Başlangıç saati '${preference.startTime}' için ${startTimeNodes.size} node bulundu")
+                
+                for (startNode in startTimeNodes) {
+                    // Başlangıç saatinin yakınında bitiş saatini ara
+                    val endTimeNode = findEndTimeNearStartTime(startNode, preference.endTime)
+                    
+                    if (endTimeNode != null) {
+                        if (DEBUG_MODE) Log.d(TAG, "Eşleşen slot bulundu: ${preference.startTime} - ${preference.endTime}")
+                        
+                        // Bu slotun "Ayırt" butonunu bul
+                        val reserveButton = findReserveButtonForTimeSlot(startNode, endTimeNode)
+                        
+                        if (reserveButton != null) {
+                            if (DEBUG_MODE) {
+                                // TEST MODU: Sadece bul, tıklama
+                                Log.d(TAG, "✅ SLOT BULUNDU (TEST MODU): ${preference.startTime} - ${preference.endTime}")
+                                Log.d(TAG, "⚠️ DEBUG_MODE=true olduğu için ayırt butonu tıklanmıyor")
+                                Log.d(TAG, "📌 Otomatik ayırt için DEBUG_MODE=false yapın")
+                            } else {
+                                // CANLI MOD: Ayırt et
+                                humanDelay()
+                                reserveButton.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                Log.d(TAG, "Ayırt butonu tıklandı: ${preference.startTime} - ${preference.endTime}")
+                                
+                                // Onay ekranını bekle
+                                isWaitingForConfirmation = true
+                                Log.d(TAG, "Onay ekranı bekleniyor...")
+                            }
+                            
+                            // İlk eşleşen slotu bulduk, çık
+                            return
+                        } else {
+                            if (DEBUG_MODE) Log.w(TAG, "Slot bulundu ama Ayırt butonu bulunamadı")
+                        }
                     }
                 }
             }
             
-            // Onay/Kaydet butonunu bul ve insan gibi tıkla
-            humanDelay(MIN_HUMAN_DELAY + 700, MAX_HUMAN_DELAY + 1500) // Kontrol etme süresi
-            val confirmButton = findNodesByText(rootNode, listOf("onayla", "kaydet", "tamamla", "confirm", "save")).firstOrNull {
-                it.isClickable
-            }
-            
-            confirmButton?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-            if (DEBUG_MODE) Log.d(TAG, "Slot seçimi onaylandı")
+            if (DEBUG_MODE) Log.w(TAG, "Hiçbir tercih edilen slot bulunamadı")
             
         } finally {
             // 3 saniye sonra reset et (tekrar seçim yapabilmek için)
             Thread.sleep(3000)
             isSlotSelectionActive = false
+            isDaySelected = false // Gün seçimini resetle
         }
+    }
+    
+    /**
+     * Tam olarak verilen metni içeren node'ları bulur
+     */
+    private fun findNodesByExactText(node: AccessibilityNodeInfo, searchText: String): List<AccessibilityNodeInfo> {
+        val results = mutableListOf<AccessibilityNodeInfo>()
+        findNodesByExactTextRecursive(node, searchText, results)
+        return results
+    }
+    
+    private fun findNodesByExactTextRecursive(node: AccessibilityNodeInfo, searchText: String, results: MutableList<AccessibilityNodeInfo>) {
+        node.text?.toString()?.let { text ->
+            if (text.trim() == searchText) {
+                results.add(node)
+            }
+        }
+        
+        // Child node'ları kontrol et
+        for (i in 0 until node.childCount) {
+            node.getChild(i)?.let { child ->
+                findNodesByExactTextRecursive(child, searchText, results)
+            }
+        }
+    }
+    
+    /**
+     * Başlangıç saati node'unun yakınında bitiş saatini bulur
+     * Aynı parent altında veya sibling olarak olmalı
+     */
+    private fun findEndTimeNearStartTime(startNode: AccessibilityNodeInfo, endTime: String): AccessibilityNodeInfo? {
+        // Önce parent'a git
+        val parent = startNode.parent ?: return null
+        
+        // Parent'ın tüm child'larında bitiş saatini ara
+        for (i in 0 until parent.childCount) {
+            parent.getChild(i)?.let { child ->
+                if (child.text?.toString()?.trim() == endTime) {
+                    return child
+                }
+                
+                // Child'ın sub-tree'sinde de ara
+                val found = findNodesByExactText(child, endTime).firstOrNull()
+                if (found != null) return found
+            }
+        }
+        
+        // Bulunamadıysa bir üst parent'a git
+        val grandParent = parent.parent
+        if (grandParent != null) {
+            for (i in 0 until grandParent.childCount) {
+                grandParent.getChild(i)?.let { child ->
+                    val found = findNodesByExactText(child, endTime).firstOrNull()
+                    if (found != null) return found
+                }
+            }
+        }
+        
+        return null
+    }
+    
+    /**
+     * Başlangıç ve bitiş saati node'ları için "Ayırt" butonunu bulur
+     */
+    private fun findReserveButtonForTimeSlot(startNode: AccessibilityNodeInfo, endNode: AccessibilityNodeInfo): AccessibilityNodeInfo? {
+        // Önce aynı parent altındaki sibling'lerde ara
+        val parent = startNode.parent
+        if (parent != null) {
+            val childCount = parent.childCount
+            var foundStartNode = false
+            
+            // Parent'ın tüm child'larını gez
+            for (i in 0 until childCount) {
+                val child = parent.getChild(i) ?: continue
+                
+                // Başlangıç node'unu bulana kadar geç
+                if (child == startNode) {
+                    foundStartNode = true
+                    continue
+                }
+                
+                // Başlangıç node'undan sonra, "Ayırt" butonunu ara
+                if (foundStartNode) {
+                    val text = child.text?.toString()?.lowercase()
+                    if (text != null && text.contains("ayırt") && child.isClickable) {
+                        if (DEBUG_MODE) Log.d(TAG, "Ayırt butonu bulundu (sibling)")
+                        return child
+                    }
+                }
+            }
+        }
+        
+        // Sibling'lerde bulunamadıysa, parent tree'de yukarı çık
+        var currentParent: AccessibilityNodeInfo? = parent
+        var depth = 0
+        
+        while (currentParent != null && depth < 7) {
+            // Bu parent'ın sub-tree'sinde "Ayırt" butonu ara
+            val reserveButton = findNodeInSubtree(currentParent, "ayırt")
+            
+            if (reserveButton != null && reserveButton.isClickable) {
+                if (DEBUG_MODE) Log.d(TAG, "Ayırt butonu bulundu (parent depth: $depth)")
+                return reserveButton
+            }
+            
+            currentParent = currentParent.parent
+            depth++
+        }
+        
+        return null
+    }
+    
+    /**
+     * Belirli bir node'un alt ağacında text arayan yardımcı fonksiyon
+     */
+    private fun findNodeInSubtree(node: AccessibilityNodeInfo, searchText: String): AccessibilityNodeInfo? {
+        // Önce kendisini kontrol et
+        node.text?.toString()?.let { text ->
+            if (text.contains(searchText, ignoreCase = true)) {
+                return node
+            }
+        }
+        
+        node.contentDescription?.toString()?.let { desc ->
+            if (desc.contains(searchText, ignoreCase = true)) {
+                return node
+            }
+        }
+        
+        // Child'ları kontrol et
+        for (i in 0 until node.childCount) {
+            node.getChild(i)?.let { child ->
+                val result = findNodeInSubtree(child, searchText)
+                if (result != null) return result
+            }
+        }
+        
+        return null
     }
     
     /**

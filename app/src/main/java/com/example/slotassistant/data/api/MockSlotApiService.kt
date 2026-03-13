@@ -12,26 +12,79 @@ import retrofit2.Response
 class MockSlotApiService : SlotApiService {
     
     // Simüle edilmiş slot veritabanı
-    private val mockSlots = mutableListOf(
-        Slot("1", "09:00", "12:00", true, "2026-03-12"),
-        Slot("2", "12:00", "15:00", true, "2026-03-12"),
-        Slot("3", "15:00", "18:00", false, "2026-03-12"),
-        Slot("4", "16:15", "19:15", true, "2026-03-12"), // Kullanıcının istediği slot
-        Slot("5", "18:00", "21:00", true, "2026-03-12")
-    )
-    
+    // Bugünden itibaren 21 gün için dinamik olarak oluşturulur
+    private val mockSlots: MutableList<Slot> = buildDynamicSlots()
+
+    companion object {
+        /** Bugünden itibaren 21 gün boyunca, her gün için 3 saatlik aralıklarda
+         *  kapsamlı slotlar üretir. Kullanıcının girdiği herhangi bir saat
+         *  bu listede ya tam eşleşme ya da yakın değer olarak bulunabilir. */
+        fun buildDynamicSlots(): MutableList<Slot> {
+            val list = mutableListOf<Slot>()
+            val fmt = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+            val cal = java.util.Calendar.getInstance()
+
+            // Her güne ait slotlar — yaygın kurye saatlerini kapsamlı şekilde listeliyor
+            val dailySlots = listOf(
+                "09:00" to "12:00",
+                "10:00" to "13:00",
+                "11:00" to "14:00",
+                "12:00" to "15:00",
+                "13:00" to "16:00",
+                "14:00" to "17:00",
+                "15:00" to "18:00",
+                "16:00" to "19:00",
+                "16:15" to "19:15",
+                "17:00" to "20:00",
+                "17:30" to "19:45",  // ← Yaygın kurye vardiya saati
+                "17:30" to "20:30",
+                "18:00" to "21:00",
+                "19:00" to "22:00",
+                "20:00" to "22:00",
+                "20:00" to "23:00",
+                "21:00" to "23:45",
+                "22:00" to "01:00",
+                "23:00" to "02:00",
+                "23:45" to "02:45"
+            )
+
+            var idCounter = 1
+            repeat(21) { dayOffset ->
+                val dateCal = cal.clone() as java.util.Calendar
+                dateCal.add(java.util.Calendar.DAY_OF_MONTH, dayOffset)
+                val dateStr = fmt.format(dateCal.time)
+
+                dailySlots.forEach { (start, end) ->
+                    list.add(Slot(idCounter.toString(), start, end, true, dateStr))
+                    idCounter++
+                }
+            }
+
+            android.util.Log.d("MockSlotApi", "Dinamik mock: ${list.size} slot oluşturuldu (21 gün)")
+            return list
+        }
+    }
+
+
     override suspend fun getAvailableSlots(date: String): Response<SlotsResponse> {
         // Network gecikmesini simüle et
         delay(1000)
         
+        val filteredSlots = mockSlots.filter { it.date == date }
+        android.util.Log.d("MockSlotApi", "Tarih: $date için ${filteredSlots.size} slot bulundu")
+        filteredSlots.forEach { 
+            android.util.Log.d("MockSlotApi", "  - ${it.startTime}-${it.endTime} (ID: ${it.id}, Müsait: ${it.isAvailable})")
+        }
+        
         return Response.success(
             SlotsResponse(
-                slots = mockSlots.filter { it.date == date },
+                slots = filteredSlots,
                 success = true,
                 message = "Slots retrieved successfully"
             )
         )
     }
+
     
     override suspend fun reserveSlot(request: ReservationRequest): Response<ReservationResponse> {
         // Network gecikmesini simüle et

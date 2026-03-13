@@ -103,14 +103,20 @@ class WorkScheduler(private val context: Context) {
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
         
+        // Manuel test olduğunu işaretle
+        val inputData = Data.Builder()
+            .putBoolean("manual_test", true)
+            .build()
+        
         val workRequest = OneTimeWorkRequestBuilder<SlotCheckWorker>()
             .setConstraints(constraints)
+            .setInputData(inputData)
             .addTag(SLOT_CHECK_WORK_TAG)
             .build()
         
         WorkManager.getInstance(context).enqueue(workRequest)
         
-        Log.d(TAG, "Anlık slot kontrolü başlatıldı")
+        Log.d(TAG, "Anlık slot kontrolü başlatıldı (Manuel Test)")
     }
     
     /**

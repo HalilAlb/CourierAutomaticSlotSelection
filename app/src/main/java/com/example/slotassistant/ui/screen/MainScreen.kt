@@ -33,22 +33,44 @@ fun MainScreen(viewModel: MainViewModel) {
     val courierPassword by viewModel.courierPassword.collectAsState()
     val courierLevel by viewModel.courierLevel.collectAsState()
     val slotSelectionDay by viewModel.slotSelectionDay.collectAsState()
+    val courierAppPackage by viewModel.courierAppPackage.collectAsState()
+    
+    // Haftalık seçim
+    val weeksAhead by viewModel.weeksAhead.collectAsState()
     
     // Güncelleme bilgisi
     val updateInfo by viewModel.updateInfo.collectAsState()
     val context = androidx.compose.ui.platform.LocalContext.current
     
+    // Accessibility izin durumu
+    var isAccessibilityEnabled by remember { 
+        mutableStateOf(
+            com.example.slotassistant.utils.PermissionUtils.isAccessibilityServiceEnabled(
+                context, 
+                com.example.slotassistant.accessibility.CourierAccessibilityService::class.java
+            )
+        )
+    }
+    
     var showAddSlotDialog by remember { mutableStateOf(false) }
+    var showEditSlotDialog by remember { mutableStateOf<TimePreference?>(null) }
     var showScheduleTimePicker by remember { mutableStateOf(false) }
     var showCourierSettingsDialog by remember { mutableStateOf(false) }
     
-    var newStartHour by remember { mutableStateOf(16) }
-    var newStartMinute by remember { mutableStateOf(15) }
-    var newEndHour by remember { mutableStateOf(19) }
-    var newEndMinute by remember { mutableStateOf(15) }
+    // String olarak tutuyoruz - silme işlemi çalışsın diye
+    var newStartHour by remember { mutableStateOf("16") }
+    var newStartMinute by remember { mutableStateOf("15") }
+    var newEndHour by remember { mutableStateOf("19") }
+    var newEndMinute by remember { mutableStateOf("15") }
     
-    var selectedScheduleHour by remember { mutableStateOf(scheduleHour) }
-    var selectedScheduleMinute by remember { mutableStateOf(scheduleMinute) }
+    // Düzenleme için
+    var editStartHour by remember { mutableStateOf("16") }
+    var editStartMinute by remember { mutableStateOf("15") }
+    var editEndHour by remember { mutableStateOf("19") }
+    var editEndMinute by remember { mutableStateOf("15") }
+    
+    var selectedScheduleHour by remember { mutableStateOf(scheduleHour.toString()) }
+    var selectedScheduleMinute by remember { mutableStateOf(scheduleMinute.toString()) }
     
     Scaffold(
         topBar = {
@@ -88,6 +110,96 @@ fun MainScreen(viewModel: MainViewModel) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // Accessibility İzin Uyarısı
+            if (!isAccessibilityEnabled) {
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    Icons.Default.Warning,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.size(32.dp)
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    "Erişilebilirlik İzni Gerekli",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                            
+                            Text(
+                                "Otomatik slot seçimi için Erişilebilirlik Servisi'ni açmanız gerekiyor.",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            
+                            Button(
+                                onClick = { 
+                                    com.example.slotassistant.utils.PermissionUtils.openAccessibilitySettings(context)
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.error
+                                )
+                            ) {
+                                Icon(Icons.Default.Settings, contentDescription = null)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Ayarlara Git")
+                            }
+                            
+                            OutlinedButton(
+                                onClick = { 
+                                    isAccessibilityEnabled = com.example.slotassistant.utils.PermissionUtils.isAccessibilityServiceEnabled(
+                                        context, 
+                                        com.example.slotassistant.accessibility.CourierAccessibilityService::class.java
+                                    )
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(Icons.Default.Refresh, contentDescription = null)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Durumu Yenile")
+                            }
+                        }
+                    }
+                }
+            } else {
+                // İzin verildi bildirimi
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Default.CheckCircle,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                "✅ Erişilebilirlik Servisi Aktif",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+            }
+            
             // Kurye Ayarları
             item {
                 CourierSettingsSection(
@@ -114,15 +226,27 @@ fun MainScreen(viewModel: MainViewModel) {
                 SlotsListSection(
                     timePreferences = timePreferences,
                     onAddClick = { showAddSlotDialog = true },
+                    onEditClick = { pref ->
+                        // Mevcut değerleri parse et
+                        val startParts = pref.startTime.split(":")
+                        val endParts = pref.endTime.split(":")
+                        editStartHour = startParts.getOrNull(0) ?: "16"
+                        editStartMinute = startParts.getOrNull(1) ?: "15"
+                        editEndHour = endParts.getOrNull(0) ?: "19"
+                        editEndMinute = endParts.getOrNull(1) ?: "15"
+                        showEditSlotDialog = pref
+                    },
                     onRemoveClick = { viewModel.removeTimePreference(it) }
                 )
             }
             
-            // Gün seçimi
+            // Çalışma günleri ve hafta seçimi
             item {
-                DaySelectionSection(
+                WorkScheduleSection(
                     selectedDays = selectedDays,
-                    onDayToggle = { viewModel.toggleDay(it) }
+                    weeksAhead = weeksAhead,
+                    onDayToggle = { viewModel.toggleDay(it) },
+                    onWeeksAheadChange = { viewModel.setWeeksAhead(it) }
                 )
             }
             
@@ -138,8 +262,8 @@ fun MainScreen(viewModel: MainViewModel) {
                     onScheduleTimeClick = { showScheduleTimePicker = true },
                     onSchedule = { h, m -> viewModel.scheduleWork(h, m) },
                     onCancel = { viewModel.cancelWork() },
-                    selectedScheduleHour = selectedScheduleHour,
-                    selectedScheduleMinute = selectedScheduleMinute
+                    selectedScheduleHour = selectedScheduleHour.toIntOrNull() ?: scheduleHour,
+                    selectedScheduleMinute = selectedScheduleMinute.toIntOrNull() ?: scheduleMinute
                 )
             }
             
@@ -172,48 +296,172 @@ fun MainScreen(viewModel: MainViewModel) {
                     Text("Başlangıç Saati")
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         OutlinedTextField(
-                            value = newStartHour.toString().padStart(2, '0'),
-                            onValueChange = { newStartHour = it.toIntOrNull() ?: newStartHour },
+                            value = newStartHour,
+                            onValueChange = { 
+                                if (it.length <= 2 && (it.isEmpty() || it.all { c -> c.isDigit() })) {
+                                    newStartHour = it
+                                }
+                            },
                             label = { Text("Saat") },
-                            modifier = Modifier.weight(1f)
+                            placeholder = { Text("00") },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
                         )
                         OutlinedTextField(
-                            value = newStartMinute.toString().padStart(2, '0'),
-                            onValueChange = { newStartMinute = it.toIntOrNull() ?: newStartMinute },
+                            value = newStartMinute,
+                            onValueChange = { 
+                                if (it.length <= 2 && (it.isEmpty() || it.all { c -> c.isDigit() })) {
+                                    newStartMinute = it
+                                }
+                            },
                             label = { Text("Dakika") },
-                            modifier = Modifier.weight(1f)
+                            placeholder = { Text("00") },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
                         )
                     }
                     
                     Text("Bitiş Saati")
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         OutlinedTextField(
-                            value = newEndHour.toString().padStart(2, '0'),
-                            onValueChange = { newEndHour = it.toIntOrNull() ?: newEndHour },
+                            value = newEndHour,
+                            onValueChange = { 
+                                if (it.length <= 2 && (it.isEmpty() || it.all { c -> c.isDigit() })) {
+                                    newEndHour = it
+                                }
+                            },
                             label = { Text("Saat") },
-                            modifier = Modifier.weight(1f)
+                            placeholder = { Text("00") },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
                         )
                         OutlinedTextField(
-                            value = newEndMinute.toString().padStart(2, '0'),
-                            onValueChange = { newEndMinute = it.toIntOrNull() ?: newEndMinute },
+                            value = newEndMinute,
+                            onValueChange = { 
+                                if (it.length <= 2 && (it.isEmpty() || it.all { c -> c.isDigit() })) {
+                                    newEndMinute = it
+                                }
+                            },
                             label = { Text("Dakika") },
-                            modifier = Modifier.weight(1f)
+                            placeholder = { Text("00") },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
                         )
                     }
                 }
             },
             confirmButton = {
                 TextButton(onClick = {
-                    val start = "${newStartHour.toString().padStart(2, '0')}:${newStartMinute.toString().padStart(2, '0')}"
-                    val end = "${newEndHour.toString().padStart(2, '0')}:${newEndMinute.toString().padStart(2, '0')}"
+                    // String'leri Int'e çevir, boşsa 0 kullan
+                    val startH = newStartHour.toIntOrNull() ?: 0
+                    val startM = newStartMinute.toIntOrNull() ?: 0
+                    val endH = newEndHour.toIntOrNull() ?: 0
+                    val endM = newEndMinute.toIntOrNull() ?: 0
+                    
+                    val start = "${startH.toString().padStart(2, '0')}:${startM.toString().padStart(2, '0')}"
+                    val end = "${endH.toString().padStart(2, '0')}:${endM.toString().padStart(2, '0')}"
                     viewModel.addTimePreference(start, end)
                     showAddSlotDialog = false
+                    
+                    // Reset değerleri
+                    newStartHour = "16"
+                    newStartMinute = "15"
+                    newEndHour = "19"
+                    newEndMinute = "15"
                 }) {
                     Text("EKLE")
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showAddSlotDialog = false }) {
+                    Text("İPTAL")
+                }
+            }
+        )
+    }
+    
+    // Düzenleme dialogu
+    showEditSlotDialog?.let { pref ->
+        AlertDialog(
+            onDismissRequest = { showEditSlotDialog = null },
+            title = { Text("Slot Düzenle") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Text("Başlangıç Saati")
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedTextField(
+                            value = editStartHour,
+                            onValueChange = { 
+                                if (it.length <= 2 && (it.isEmpty() || it.all { c -> c.isDigit() })) {
+                                    editStartHour = it
+                                }
+                            },
+                            label = { Text("Saat") },
+                            placeholder = { Text("00") },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
+                        )
+                        OutlinedTextField(
+                            value = editStartMinute,
+                            onValueChange = { 
+                                if (it.length <= 2 && (it.isEmpty() || it.all { c -> c.isDigit() })) {
+                                    editStartMinute = it
+                                }
+                            },
+                            label = { Text("Dakika") },
+                            placeholder = { Text("00") },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
+                        )
+                    }
+                    
+                    Text("Bitiş Saati")
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedTextField(
+                            value = editEndHour,
+                            onValueChange = { 
+                                if (it.length <= 2 && (it.isEmpty() || it.all { c -> c.isDigit() })) {
+                                    editEndHour = it
+                                }
+                            },
+                            label = { Text("Saat") },
+                            placeholder = { Text("00") },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
+                        )
+                        OutlinedTextField(
+                            value = editEndMinute,
+                            onValueChange = { 
+                                if (it.length <= 2 && (it.isEmpty() || it.all { c -> c.isDigit() })) {
+                                    editEndMinute = it
+                                }
+                            },
+                            label = { Text("Dakika") },
+                            placeholder = { Text("00") },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    // String'leri Int'e çevir, boşsa 0 kullan
+                    val startH = editStartHour.toIntOrNull() ?: 0
+                    val startM = editStartMinute.toIntOrNull() ?: 0
+                    val endH = editEndHour.toIntOrNull() ?: 0
+                    val endM = editEndMinute.toIntOrNull() ?: 0
+                    
+                    val start = "${startH.toString().padStart(2, '0')}:${startM.toString().padStart(2, '0')}"
+                    val end = "${endH.toString().padStart(2, '0')}:${endM.toString().padStart(2, '0')}"
+                    viewModel.updateTimePreference(pref, start, end)
+                    showEditSlotDialog = null
+                }) {
+                    Text("GÜNCELLE")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showEditSlotDialog = null }) {
                     Text("İPTAL")
                 }
             }
@@ -228,16 +476,27 @@ fun MainScreen(viewModel: MainViewModel) {
             text = {
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
                     OutlinedTextField(
-                        value = selectedScheduleHour.toString().padStart(2, '0'),
-                        onValueChange = { selectedScheduleHour = it.toIntOrNull() ?: selectedScheduleHour },
+                        value = selectedScheduleHour,
+                        onValueChange = { 
+                            if (it.length <= 2 && (it.isEmpty() || it.all { c -> c.isDigit() })) {
+                                selectedScheduleHour = it
+                            }
+                        },
                         label = { Text("Saat") },
-                        modifier = Modifier.weight(1f)
+                        placeholder = { Text("00") },
+                        modifier = Modifier.weight(1f),
+                        singleLine = true
                     )
                     Text(":", style = MaterialTheme.typography.headlineMedium)
                     OutlinedTextField(
-                        value = selectedScheduleMinute.toString().padStart(2, '0'),
-                        onValueChange = { selectedScheduleMinute = it.toIntOrNull() ?: selectedScheduleMinute },
+                        value = selectedScheduleMinute,
+                        onValueChange = { 
+                            if (it.length <= 2 && (it.isEmpty() || it.all { c -> c.isDigit() })) {
+                                selectedScheduleMinute = it
+                            }
+                        },
                         label = { Text("Dakika") },
+                        placeholder = { Text("00") },
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -256,18 +515,17 @@ fun MainScreen(viewModel: MainViewModel) {
         var inputPassword by remember { mutableStateOf(courierPassword) }
         var inputLevel by remember { mutableStateOf(courierLevel) }
         var inputSelectionDay by remember { mutableStateOf(slotSelectionDay) }
+        var inputPackageName by remember { mutableStateOf(courierAppPackage) }
         
-        // Slot seçim saati - seviye seçilince varsayılanı göster
-        val defaultTime = remember(inputLevel) {
-            try {
-                val level = com.example.slotassistant.data.model.CourierLevel.valueOf(inputLevel)
-                level.slotSelectionHour to level.slotSelectionMinute
-            } catch (e: Exception) {
-                11 to 0
-            }
+        // Slot seçim saati - mevcut kayıtlı değerleri kullan
+        var inputHour by remember { mutableStateOf(scheduleHour.toString()) }
+        var inputMinute by remember { mutableStateOf(scheduleMinute.toString()) }
+        
+        // Seviye değiştiğinde varsayılan saati göster (opsiyonel)
+        LaunchedEffect(inputLevel) {
+            // Kullanıcı manuel değiştirmediyse, seviyeye göre varsayılanı doldur
+            // Ancak kullanıcı zaten bir değer girdiyse, onu koruyalım
         }
-        var inputHour by remember(defaultTime) { mutableStateOf(defaultTime.first.toString()) }
-        var inputMinute by remember(defaultTime) { mutableStateOf(defaultTime.second.toString()) }
         
         AlertDialog(
             onDismissRequest = { showCourierSettingsDialog = false },
@@ -337,6 +595,29 @@ fun MainScreen(viewModel: MainViewModel) {
                             singleLine = true
                         )
                     }
+                    
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
+                    
+                    Text("📱 Kurye Uygulaması Paket Adı", style = MaterialTheme.typography.labelMedium)
+                    Text(
+                        "AccessibilityService'in doğru uygulamayı izlemesi için paket adını girin.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    OutlinedTextField(
+                        value = inputPackageName,
+                        onValueChange = { inputPackageName = it },
+                        label = { Text("Paket Adı (örn: com.yemeksepeti.express)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        supportingText = {
+                            Text(
+                                "💡 Paket adını bulmak için:\nadb shell dumpsys window | grep mCurrentFocus",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                            )
+                        }
+                    )
                 }
             },
             confirmButton = {
@@ -345,6 +626,9 @@ fun MainScreen(viewModel: MainViewModel) {
                     val minute = inputMinute.toIntOrNull() ?: 0
                     viewModel.saveCourierCredentials(inputId, inputPassword, inputLevel, hour, minute)
                     viewModel.setSlotSelectionDay(inputSelectionDay)
+                    if (inputPackageName.isNotBlank()) {
+                        viewModel.setCourierAppPackage(inputPackageName)
+                    }
                     showCourierSettingsDialog = false
                 }) {
                     Text("KAYDET")
@@ -399,6 +683,7 @@ fun MainScreen(viewModel: MainViewModel) {
 fun SlotsListSection(
     timePreferences: List<TimePreference>,
     onAddClick: () -> Unit,
+    onEditClick: (TimePreference) -> Unit,
     onRemoveClick: (TimePreference) -> Unit
 ) {
     Card(
@@ -423,8 +708,13 @@ fun SlotsListSection(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text("${pref.startTime} - ${pref.endTime}", style = MaterialTheme.typography.bodyLarge)
-                            IconButton(onClick = { onRemoveClick(pref) }) {
-                                Icon(Icons.Default.Delete, "Sil", tint = MaterialTheme.colorScheme.error)
+                            Row {
+                                IconButton(onClick = { onEditClick(pref) }) {
+                                    Icon(Icons.Default.Edit, "Düzenle", tint = MaterialTheme.colorScheme.primary)
+                                }
+                                IconButton(onClick = { onRemoveClick(pref) }) {
+                                    Icon(Icons.Default.Delete, "Sil", tint = MaterialTheme.colorScheme.error)
+                                }
                             }
                         }
                     }
@@ -435,6 +725,227 @@ fun SlotsListSection(
                 Icon(Icons.Default.Add, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("Yeni Slot Ekle")
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WorkScheduleSection(
+    selectedDays: Set<WorkDay>,
+    weeksAhead: Int,
+    onDayToggle: (WorkDay) -> Unit,
+    onWeeksAheadChange: (Int) -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+    ) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.DateRange, contentDescription = null, tint = MaterialTheme.colorScheme.secondary)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("📅 Çalışma Planı", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            }
+            
+            // Hafta seçimi
+            Text("Hangi Hafta:", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+            
+            val weeks = listOf(
+                0 to "Bu hafta",
+                1 to "Gelecek hafta"
+            )
+            
+            var weekExpanded by remember { mutableStateOf(false) }
+            
+            ExposedDropdownMenuBox(
+                expanded = weekExpanded,
+                onExpandedChange = { weekExpanded = !weekExpanded }
+            ) {
+                OutlinedTextField(
+                    value = weeks.find { it.first == weeksAhead }?.second ?: "Bu hafta",
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = weekExpanded)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(),
+                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
+                )
+                
+                ExposedDropdownMenu(
+                    expanded = weekExpanded,
+                    onDismissRequest = { weekExpanded = false }
+                ) {
+                    weeks.forEach { (weekNum, weekName) ->
+                        DropdownMenuItem(
+                            text = { Text(weekName) },
+                            onClick = {
+                                onWeeksAheadChange(weekNum)
+                                weekExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
+            
+            Divider()
+            
+            // Gün seçimi
+            Text("Çalışma Günleri:", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+            Text("Seçtiğiniz günlerde slot ayırtılacak", style = MaterialTheme.typography.bodySmall)
+            
+            WorkDay.values().forEach { day ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Checkbox(
+                        checked = selectedDays.contains(day),
+                        onCheckedChange = { onDayToggle(day) }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        day.displayName,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
+            
+            // Seçim özeti
+            if (selectedDays.isNotEmpty()) {
+                Divider()
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text(
+                            "✅ Seçiminiz:",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        val weekText = weeks.find { it.first == weeksAhead }?.second ?: "Bu hafta"
+                        val daysText = selectedDays.joinToString(", ") { it.displayName }
+                        Text(
+                            "$weekText $daysText için slot aranacak",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ImprovedDaySelectionSection(
+    selectedDays: Set<WorkDay>,
+    onDayToggle: (WorkDay) -> Unit
+) {
+    // Bugün hangi gün?
+    val calendar = java.util.Calendar.getInstance()
+    val today = calendar.get(java.util.Calendar.DAY_OF_WEEK)
+    val isMonday = today == java.util.Calendar.MONDAY
+    
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+    ) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.DateRange, contentDescription = null, tint = MaterialTheme.colorScheme.secondary)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("📅 Çalışma Günleri", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            }
+            
+            // Yemeksepeti kuralları açıklaması
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (isMonday) 
+                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f)
+                    else 
+                        MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.6f)
+                )
+            ) {
+                Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        "ℹ️ Yemeksepeti Kurye Slot Kuralları:",
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    if (isMonday) {
+                        Text(
+                            "✅ Bugün PAZARTESİ - Bu haftanın günlerini seçebilirsiniz",
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    } else {
+                        Text(
+                            "📌 Bugün Pazartesi değil - Gelecek haftanın günleri aranacak",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                    Text(
+                        "• Pazartesi: Bu hafta slotları",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        "• Çarşamba/Perşembe: Gelecek hafta slotları",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+            
+            Text("Çalışmak istediğiniz günleri seçin:", style = MaterialTheme.typography.bodyMedium)
+            
+            WorkDay.values().forEach { day ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Checkbox(
+                        checked = selectedDays.contains(day),
+                        onCheckedChange = { onDayToggle(day) }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        day.displayName,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
+            
+            // Seçilen günlerin özeti
+            if (selectedDays.isNotEmpty()) {
+                Divider()
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text(
+                            "✅ Seçiminiz:",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        val weekText = if (isMonday) "Bu hafta" else "Gelecek hafta"
+                        val daysText = selectedDays.joinToString(", ") { it.displayName }
+                        Text(
+                            "$weekText $daysText günleri için slot aranacak",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
             }
         }
     }
@@ -529,7 +1040,9 @@ fun ScheduleSection(
                     Text("Otomatik Kontrolü İptal Et")
                 }
             } else {
-                Button(onClick = { onSchedule(selectedScheduleHour, selectedScheduleMinute) }, modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = { 
+                    onSchedule(selectedScheduleHour, selectedScheduleMinute)
+                }, modifier = Modifier.fillMaxWidth()) {
                     Icon(Icons.Default.PlayArrow, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Otomatik Kontrolü Başlat")
@@ -660,6 +1173,7 @@ fun MainScreenPreview() {
                         TimePreference(startTime = "20:00", endTime = "22:00")
                     ),
                     onAddClick = {},
+                    onEditClick = {},
                     onRemoveClick = {}
                 )
             }

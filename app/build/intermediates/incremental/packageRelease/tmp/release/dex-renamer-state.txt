@@ -1,4 +1,0 @@
-#Mon Mar 09 16:14:55 TRT 2026
-base.0=/Users/halilalbayrak/Desktop/new-project/app/build/intermediates/dex/release/minifyReleaseWithR8/classes.dex
-renamed.0=classes.dex
-path.0=classes.dex

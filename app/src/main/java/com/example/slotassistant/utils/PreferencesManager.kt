@@ -36,6 +36,11 @@ class PreferencesManager(private val context: Context) {
         private val COURIER_LEVEL = stringPreferencesKey("courier_level")
         private val AUTO_DETECT_LEVEL = stringPreferencesKey("auto_detect_level")
         private val SLOT_SELECTION_DAY = stringPreferencesKey("slot_selection_day") // WEDNESDAY veya THURSDAY
+        private val COURIER_APP_PACKAGE = stringPreferencesKey("courier_app_package") // Kurye uygulaması paket adı
+        
+        // Gün seçimi için
+        private val PREFERRED_DAY_OF_WEEK = stringPreferencesKey("preferred_day_of_week") // "Cu", "Pe", "Ct", "Pz" vb.
+        private val WEEKS_AHEAD = stringPreferencesKey("weeks_ahead") // 0 = bu hafta, 1 = gelecek hafta, 2 = 2 hafta sonra
     }
     
     /**
@@ -79,12 +84,21 @@ class PreferencesManager(private val context: Context) {
     
     /**
      * Tercih edilen saat aralıklarını getirir (blocking)
+     * Trim ile temizleyerek döndürüyor - format uyuşmazlıklarını önler
      */
     fun getTimePreferences(): List<TimePreference> = runBlocking {
         context.dataStore.data.map { prefs ->
             val json = prefs[TIME_PREFERENCES_LIST] ?: "[]"
             val type = object : TypeToken<List<TimePreference>>() {}.type
-            gson.fromJson<List<TimePreference>>(json, type) ?: emptyList()
+            val rawList = gson.fromJson<List<TimePreference>>(json, type) ?: emptyList()
+            
+            // Tüm string değerleri trim et
+            rawList.map { pref ->
+                pref.copy(
+                    startTime = pref.startTime.trim(),
+                    endTime = pref.endTime.trim()
+                )
+            }
         }.first()
     }
     
@@ -101,12 +115,21 @@ class PreferencesManager(private val context: Context) {
     
     /**
      * Tercih edilen saat aralıklarını Flow olarak getirir
+     * Trim ile temizleyerek döndürüyor
      */
     fun getTimePreferencesFlow(): Flow<List<TimePreference>> {
         return context.dataStore.data.map { prefs ->
             val json = prefs[TIME_PREFERENCES_LIST] ?: "[]"
             val type = object : TypeToken<List<TimePreference>>() {}.type
-            gson.fromJson<List<TimePreference>>(json, type) ?: emptyList()
+            val rawList = gson.fromJson<List<TimePreference>>(json, type) ?: emptyList()
+            
+            // Tüm string değerleri trim et
+            rawList.map { pref ->
+                pref.copy(
+                    startTime = pref.startTime.trim(),
+                    endTime = pref.endTime.trim()
+                )
+            }
         }
     }
     
@@ -240,5 +263,68 @@ class PreferencesManager(private val context: Context) {
         return context.dataStore.data.map { prefs ->
             prefs[SLOT_SELECTION_DAY] ?: "WEDNESDAY"
         }
+    }
+    
+    /**
+     * Kurye uygulaması paket adını ayarlar
+     */
+    suspend fun setCourierAppPackage(packageName: String) {
+        context.dataStore.edit { prefs ->
+            prefs[COURIER_APP_PACKAGE] = packageName
+        }
+    }
+    
+    fun getCourierAppPackage(): String = runBlocking {
+        context.dataStore.data.map { prefs ->
+            prefs[COURIER_APP_PACKAGE] ?: "com.logistics.rider.yemeksepeti"
+        }.first()
+    }
+    
+    fun getCourierAppPackageFlow(): Flow<String> {
+        return context.dataStore.data.map { prefs ->
+            prefs[COURIER_APP_PACKAGE] ?: "com.logistics.rider.yemeksepeti"
+        }
+    }
+    
+    // ==================== GÜN SEÇİMİ ====================
+    
+    /**
+     * Tercih edilen haftanın gününü ayarlar
+     * @param dayOfWeek Gün kısaltması: "Cu" = Cuma, "Pe" = Perşembe, "Ct" = Cumartesi vb.
+     */
+    suspend fun setPreferredDayOfWeek(dayOfWeek: String) {
+        context.dataStore.edit { prefs ->
+            prefs[PREFERRED_DAY_OF_WEEK] = dayOfWeek
+        }
+    }
+    
+    /**
+     * Tercih edilen haftanın gününü getirir
+     * @return Gün kısaltması ("Cu", "Pe" vb.) veya boş string
+     */
+    fun getPreferredDayOfWeek(): String = runBlocking {
+        context.dataStore.data.map { prefs ->
+            prefs[PREFERRED_DAY_OF_WEEK] ?: "" // Boş string = bugünü kullan
+        }.first()
+    }
+    
+    /**
+     * Kaç hafta sonrasını seç
+     * @param weeks 0 = bu hafta, 1 = gelecek hafta, 2 = 2 hafta sonra
+     */
+    suspend fun setWeeksAhead(weeks: Int) {
+        context.dataStore.edit { prefs ->
+            prefs[WEEKS_AHEAD] = weeks.toString()
+        }
+    }
+    
+    /**
+     * Kaç hafta sonrasını getirir
+     * @return 0 = bu hafta, 1 = gelecek hafta vb.
+     */
+    fun getWeeksAhead(): Int = runBlocking {
+        context.dataStore.data.map { prefs ->
+            prefs[WEEKS_AHEAD]?.toIntOrNull() ?: 0
+        }.first()
     }
 }

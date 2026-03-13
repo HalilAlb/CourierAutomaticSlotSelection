@@ -68,6 +68,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _slotSelectionDay = MutableStateFlow("WEDNESDAY")
     val slotSelectionDay: StateFlow<String> = _slotSelectionDay.asStateFlow()
     
+    private val _courierAppPackage = MutableStateFlow("com.logistics.rider.yemeksepeti")
+    val courierAppPackage: StateFlow<String> = _courierAppPackage.asStateFlow()
+    
+    // Haftalık çalışma günü seçimi
+    private val _preferredDayOfWeek = MutableStateFlow("")
+    val preferredDayOfWeek: StateFlow<String> = _preferredDayOfWeek.asStateFlow()
+    
+    private val _weeksAhead = MutableStateFlow(0)
+    val weeksAhead: StateFlow<Int> = _weeksAhead.asStateFlow()
+    
     // Güncelleme bilgisi
     private val _updateInfo = MutableStateFlow<com.example.slotassistant.utils.UpdateChecker.UpdateInfo?>(null)
     val updateInfo: StateFlow<com.example.slotassistant.utils.UpdateChecker.UpdateInfo?> = _updateInfo.asStateFlow()
@@ -117,11 +127,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
         
+        viewModelScope.launch {
+            preferencesManager.getCourierAppPackageFlow().collect { pkg ->
+                _courierAppPackage.value = pkg
+            }
+        }
+        
         _scheduleHour.value = preferencesManager.getScheduleHour()
         _scheduleMinute.value = preferencesManager.getScheduleMinute()
         _courierId.value = preferencesManager.getCourierId()
         _courierPassword.value = preferencesManager.getCourierPassword()
         _autoDetectLevel.value = preferencesManager.isAutoDetectLevel()
+        _preferredDayOfWeek.value = preferencesManager.getPreferredDayOfWeek()
+        _weeksAhead.value = preferencesManager.getWeeksAhead()
     }
     
     /**
@@ -144,11 +162,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun addTimePreference(startTime: String, endTime: String) {
         viewModelScope.launch {
-            val newPref = TimePreference(startTime = startTime, endTime = endTime)
+            // Format kontrolü ve temizleme
+            val cleanStartTime = startTime.trim()
+            val cleanEndTime = endTime.trim()
+            
+            android.util.Log.d("MainViewModel", "Slot ekleniyor: '$cleanStartTime' - '$cleanEndTime'")
+            android.util.Log.d("MainViewModel", "Başlangıç uzunluk: ${cleanStartTime.length}, Bitiş uzunluk: ${cleanEndTime.length}")
+            
+            val newPref = TimePreference(startTime = cleanStartTime, endTime = cleanEndTime)
             val updatedList = _timePreferences.value + newPref
             preferencesManager.setTimePreferences(updatedList)
             _timePreferences.value = updatedList
-            _uiState.value = UiState.Success("Slot eklendi: $startTime - $endTime")
+            _uiState.value = UiState.Success("Slot eklendi: $cleanStartTime - $cleanEndTime")
         }
     }
     
@@ -161,6 +186,30 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             preferencesManager.setTimePreferences(updatedList)
             _timePreferences.value = updatedList
             _uiState.value = UiState.Success("Slot silindi")
+        }
+    }
+    
+    /**
+     * Saat aralığını günceller
+     */
+    fun updateTimePreference(preference: TimePreference, newStartTime: String, newEndTime: String) {
+        viewModelScope.launch {
+            // Format kontrolü ve temizleme
+            val cleanStartTime = newStartTime.trim()
+            val cleanEndTime = newEndTime.trim()
+            
+            android.util.Log.d("MainViewModel", "Slot güncelleniyor: ID=${preference.id}, Eski: ${preference.startTime}-${preference.endTime}, Yeni: $cleanStartTime-$cleanEndTime")
+            
+            val updatedList = _timePreferences.value.map { 
+                if (it.id == preference.id) {
+                    it.copy(startTime = cleanStartTime, endTime = cleanEndTime)
+                } else {
+                    it
+                }
+            }
+            preferencesManager.setTimePreferences(updatedList)
+            _timePreferences.value = updatedList
+            _uiState.value = UiState.Success("Slot güncellendi: $cleanStartTime - $cleanEndTime")
         }
     }
     
@@ -287,6 +336,49 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _uiState.value = UiState.Idle
     }
     
+    /**
+     * Haftalık çalışma günü ayarlar (örn: "Cu" = Cuma)
+     */
+    fun setPreferredDayOfWeek(dayOfWeek: String) {
+        viewModelScope.launch {
+            preferencesManager.setPreferredDayOfWeek(dayOfWeek)
+            _preferredDayOfWeek.value = dayOfWeek
+            
+            val dayName = when(dayOfWeek) {
+                "Pt" -> "Pazartesi"
+                "Sa" -> "Salı"
+                "Ça" -> "Çarşamba"
+                "Pe" -> "Perşembe"
+                "Cu" -> "Cuma"
+                "Ct" -> "Cumartesi"
+                "Pz" -> "Pazar"
+                "" -> "Bugün"
+                else -> dayOfWeek
+            }
+            
+            _uiState.value = UiState.Success("Çalışma günü: $dayName")
+        }
+    }
+    
+    /**
+     * Kaç hafta sonrası için slot ayırtılacak (0=bu hafta, 1=gelecek hafta)
+     */
+    fun setWeeksAhead(weeks: Int) {
+        viewModelScope.launch {
+            preferencesManager.setWeeksAhead(weeks)
+            _weeksAhead.value = weeks
+            
+            val weekText = when(weeks) {
+                0 -> "Bu hafta"
+                1 -> "Gelecek hafta"
+                2 -> "2 hafta sonra"
+                else -> "$weeks hafta sonra"
+            }
+            
+            _uiState.value = UiState.Success("Hafta seçimi: $weekText")
+        }
+    }
+    
     // ==================== KURYE SİSTEMİ ====================
     
     /**
@@ -327,9 +419,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             preferencesManager.setSlotSelectionDay(day)
             _slotSelectionDay.value = day
             
-            // Seçilen güne göre otomatik zamanlama yap
-            val workDay = if (day == "WEDNESDAY") WorkDay.WEDNESDAY else WorkDay.THURSDAY
-            scheduleWork(11, 0) // Default saat 11:00
+            _uiState.value = UiState.Success("Slot seçim günü kaydedildi: $day")
+        }
+    }
+    
+    /**
+     * Kurye uygulaması paket adını ayarlar
+     */
+    fun setCourierAppPackage(packageName: String) {
+        viewModelScope.launch {
+            preferencesManager.setCourierAppPackage(packageName)
+            _courierAppPackage.value = packageName
+            
+            _uiState.value = UiState.Success("Paket adı kaydedildi: $packageName\n\nAccessibility Service'i yeniden başlatmanız gerekebilir.")
         }
     }
     

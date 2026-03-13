@@ -12,11 +12,11 @@ adb shell dumpsys window | grep -i mCurrentFocus
 
 **Örnek çıktı:**
 ```
-mCurrentFocus=Window{abc123 u0 com.yemeksepeti.courier/MainActivity}
-                                ^^^^^^^^^^^^^^^^^^^^^^^^
+mCurrentFocus=Window{76b2bd9 u0 com.logistics.rider.yemeksepeti/com.foodora.courier.main.presentation.MainActivity}
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ```
 
-Paket adı: **com.yemeksepeti.courier**
+Paket adı: **com.logistics.rider.yemeksepeti**
 
 ---
 
@@ -27,11 +27,11 @@ Paket adı: **com.yemeksepeti.courier**
 **26. satırda** değiştir:
 
 ```kotlin
-// ❌ YANLIŞ (şu anki)
+// ❌ YANLIŞ (eski)
 private const val COURIER_APP_PACKAGE = "Yemeksepeti Express"
 
 // ✅ DOĞRU (gerçek paket adı)
-private const val COURIER_APP_PACKAGE = "com.yemeksepeti.courier"
+private const val COURIER_APP_PACKAGE = "com.logistics.rider.yemeksepeti"
 ```
 
 ---
@@ -47,7 +47,7 @@ private const val COURIER_APP_PACKAGE = "com.yemeksepeti.courier"
 android:packageNames="Yemeksepeti Express"
 
 <!-- ✅ DOĞRU -->
-android:packageNames="com.yemeksepeti.courier"
+android:packageNames="com.logistics.rider.yemeksepeti"
 ```
 
 ---
@@ -85,8 +85,8 @@ Telefonda kurye uygulamasını aç → Loglar akmaya başlayacak:
 
 ```
 === YENİ EKRAN TESPİT EDİLDİ ===
-Paket: com.yemeksepeti.courier
-Sınıf: com.yemek.LoginActivity
+Paket: com.logistics.rider.yemeksepeti
+Sınıf: com.foodora.courier.main.presentation.MainActivity
 ├─ [LinearLayout] ID:com.yemek:id/login_container
   ├─ [EditText] ID:com.yemek:id/input_id TEXT:'' 
   ├─ [EditText] ID:com.yemek:id/input_password TEXT:'' 
